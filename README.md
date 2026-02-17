@@ -2,7 +2,7 @@
 
 Ash framework
 elixir lang
-## SMS notifications (Africa's Talking)
+## Realtime SMS NOTIFICATIONS
 
 more modules coming up
 ## Learn more
