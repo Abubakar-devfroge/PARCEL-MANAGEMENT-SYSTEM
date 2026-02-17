@@ -1,0 +1,89 @@
+<section class="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 lg:px-8">
+  <div class="border border-gray-200 bg-white">
+    <div class="border-b border-gray-200 px-4 py-3 sm:px-6">
+      <h1 class="text-xl font-semibold text-gray-900">Dashboard</h1>
+      <p class="mt-1 text-sm text-gray-500">Welcome, {@current_scope.user.name}</p>
+    </div>
+
+    <div class="border-t border-gray-200 px-4 py-3 sm:px-6">
+      <.link
+        id="book-parcel-cta"
+        navigate={~p"/parcel_bookings/new"}
+        class="inline-flex items-center justify-center rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-amber-700"
+      >
+        Book Parcel
+      </.link>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-6 lg:grid-cols-12">
+    <div class="border border-gray-200 bg-white lg:col-span-4">
+      <div class="border-b border-gray-200  px-4 py-3 sm:px-6">
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-700">
+          Parcel Summary
+        </h2>
+      </div>
+
+      <table class="min-w-full divide-y divide-gray-200 text-sm">
+        <tbody class="divide-y divide-gray-200 bg-white text-gray-900">
+          <tr>
+            <th class="w-1/3 bg-gray-50 px-4 py-3 text-left font-medium text-gray-700 sm:px-6">
+              Total Parcels Booked
+            </th>
+            <td class="px-4 py-3 font-semibold sm:px-6">{@total_count}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="border border-gray-200 bg-white lg:col-span-8">
+      <div class="border-b border-gray-200 bg-gray-50 px-4 py-3 sm:px-6">
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-700">
+          Recent Parcel Bookings
+        </h2>
+      </div>
+
+      <%= if Enum.empty?(@recent_parcel_bookings) do %>
+        <div class="px-4 py-10 text-center text-sm text-gray-500 sm:px-6">
+          No parcel bookings yet.
+        </div>
+      <% else %>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <thead class="bg-gray-50 text-gray-700">
+              <tr>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide sm:px-6">
+                  Parcel Number
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide sm:px-6">
+                  Sender ID
+                </th>
+                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide sm:px-6">
+                  Receiver ID
+                </th>
+                <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide sm:px-6">
+                  Action
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 bg-white text-gray-900">
+              <tr :for={parcel <- @recent_parcel_bookings}>
+                <td class="px-4 py-3 font-medium sm:px-6">{parcel.parcel_number}</td>
+                <td class="px-4 py-3 sm:px-6">{parcel.sender_id}</td>
+                <td class="px-4 py-3 sm:px-6">{parcel.receiver_id}</td>
+                <td class="px-4 py-3 text-right sm:px-6">
+                  <.link
+                    navigate={~p"/parcel_bookings/#{parcel.id}"}
+                    class="font-medium text-gray-700 transition hover:text-gray-900"
+                  >
+                    View
+                  </.link>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</section>

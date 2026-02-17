@@ -1,0 +1,231 @@
+<Layouts.app flash={@flash}>
+  <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <h1 class="text-xl font-semibold text-gray-900">Parcel Bookings</h1>
+        <p class="mt-1 text-sm text-gray-500">Manage and track all your parcel shipments</p>
+
+        <.link
+          id="new-parcel-btn"
+          navigate={~p"/parcel_bookings/new"}
+          class="inline-flex items-center justify-center rounded-md mt-2 bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-amber-700"
+        >
+          New Parcel
+        </.link>
+      </div>
+    </div>
+
+    <%= if @parcel_bookings_count == 0 do %>
+      <div class="flex flex-col items-center justify-center py-20 text-center text-gray-500">
+        <img
+          src={~p"/images/no.jpeg"}
+          alt="Empty database"
+          width="80"
+          height="80"
+          loading="lazy"
+          decoding="async"
+          fetchpriority="low"
+          class="h-20 w-auto mb-4 mx-auto"
+        />
+
+        <p class="text-sm font-semibold">No parcels yet. Start by booking your first parcel.</p>
+      </div>
+    <% else %>
+      <div class="border border-gray-200 bg-white rounded-md">
+        <div class="border-b border-gray-200 bg-gray-50 px-4 py-3 sm:px-6">
+          <div class="space-y-3">
+            <form id="parcel-search-form" phx-change="search" class="w-full">
+              <.input
+                name="search[q]"
+                value={@search_query}
+                type="search"
+                placeholder="Search parcel no, ID, sender, receiver, or phone"
+                phx-debounce="250"
+                class="w-full rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring-1 inset-ring-gray-300 placeholder:text-gray-400"
+              />
+            </form>
+
+            <%!-- <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-700">
+              Booking List
+            </h2> --%>
+          </div>
+        </div>
+
+        <%= if @filtered_parcel_bookings_count == 0 do %>
+          <div class="flex flex-col items-center justify-center px-4 py-14 text-center text-gray-500 sm:px-6">
+            <img
+              src={~p"/images/no.jpeg"}
+              alt="Record not found"
+              width="80"
+              height="80"
+              loading="lazy"
+              decoding="async"
+              fetchpriority="low"
+              class="mb-3 h-16 w-auto"
+            />
+            <p class="text-sm font-semibold text-gray-700">Record not found</p>
+            <p class="mt-1 text-sm text-gray-500">
+              Try another parcel number, ID, name, or phone.
+            </p>
+          </div>
+        <% else %>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200 text-sm">
+              <thead class="bg-gray-50 text-gray-700">
+                <tr>
+                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide sm:px-6">
+                    Parcel ID
+                  </th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide sm:px-6">
+                    From
+                  </th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide sm:px-6">
+                    To
+                  </th>
+                  <%!-- <th class="px-6 py-2 text-left uppercase tracking-wider">Destination</th> --%>
+                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide sm:px-6">
+                    Parcel Type
+                  </th>
+                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide sm:px-6">
+                    Quantity
+                  </th>
+
+                  <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wide sm:px-6">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody
+                id="parcel_bookings"
+                phx-update="stream"
+                class="divide-y divide-gray-200 bg-white text-gray-900"
+              >
+                <tr
+                  :for={{id, parcel} <- @streams.parcel_bookings}
+                  id={id}
+                  class="cursor-pointer hover:bg-gray-50 transition-colors"
+                >
+                  <td
+                    phx-click={JS.navigate(~p"/parcel_bookings/#{parcel.id}")}
+                    class="px-4 py-3 font-medium sm:px-6"
+                  >
+                    {parcel.parcel_number}
+                  </td>
+                  <td
+                    phx-click={JS.navigate(~p"/parcel_bookings/#{parcel.id}")}
+                    class="px-4 py-3 whitespace-nowrap sm:px-6"
+                  >
+                    {parcel.sender_phone}
+                  </td>
+                  <td
+                    phx-click={JS.navigate(~p"/parcel_bookings/#{parcel.id}")}
+                    class="px-4 py-3 whitespace-nowrap sm:px-6"
+                  >
+                    {parcel.receiver_phone}
+                  </td>
+                  <%!-- <td phx-click={JS.navigate(~p"/parcel_bookings/#{parcel.id}")}>{parcel.destination}</td> --%>
+                  <td
+                    phx-click={JS.navigate(~p"/parcel_bookings/#{parcel.id}")}
+                    class="px-4 py-3 whitespace-nowrap sm:px-6"
+                  >
+                    {parcel.parcel_type}
+                  </td>
+                  <td
+                    phx-click={JS.navigate(~p"/parcel_bookings/#{parcel.id}")}
+                    class="px-4 py-3 whitespace-nowrap sm:px-6"
+                  >
+                    {parcel.quantity}
+                  </td>
+
+                  <td class="px-4 py-3 whitespace-nowrap text-right sm:px-6">
+                    <div class="flex items-center justify-end gap-3">
+                      <.link
+                        navigate={~p"/parcel_bookings/#{parcel.id}/edit"}
+                        class="font-medium text-gray-700 transition hover:text-gray-900"
+                      >
+                        Edit
+                      </.link>
+                      <button
+                        type="button"
+                        phx-click="open_delete_modal"
+                        phx-value-id={parcel.id}
+                        class="font-medium text-red-600 transition hover:text-red-700"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%= if @delete_parcel_id do %>
+      <div class="fixed inset-0 z-50">
+        <button
+          type="button"
+          phx-click="close_delete_modal"
+          class="absolute inset-0 bg-gray-500/75"
+          aria-label="Close modal"
+        >
+        </button>
+
+        <div class="relative flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+          <div class="relative w-full max-w-lg overflow-hidden rounded-lg bg-white text-left sm:my-8">
+            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+              <div class="sm:flex sm:items-start">
+                <div class="mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:size-10">
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    data-slot="icon"
+                    aria-hidden="true"
+                    class="size-6 text-red-600"
+                  >
+                    <path
+                      d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </div>
+                <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                  <h3 id="dialog-title" class="text-base font-semibold text-gray-900">
+                    Delete parcel booking
+                  </h3>
+                  <div class="mt-2">
+                    <p class="text-sm text-gray-500">
+                      Are you sure you want to delete this parcel booking? This action cannot be undone.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+              <button
+                type="button"
+                phx-click="delete"
+                phx-value-id={@delete_parcel_id}
+                class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white hover:bg-red-500 sm:ml-3 sm:w-auto"
+              >
+                Delete
+              </button>
+              <button
+                type="button"
+                phx-click="close_delete_modal"
+                class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 inset-ring inset-ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</Layouts.app>

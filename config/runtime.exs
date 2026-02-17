@@ -22,6 +22,25 @@ end
 
 config :goods, GoodsWeb.Endpoint, http: [port: String.to_integer(System.get_env("PORT", "4000"))]
 
+dev_africastalking_defaults =
+  if config_env() == :dev do
+    %{
+      username: "parceltracker",
+      api_key: "atsk_de1207fb8f357cb6a81caec92b4a98dfdd73ee0c40f8ac9a81841f45ecfcd040f6a0ec06",
+      from: "PARCEL"
+    }
+  else
+    %{}
+  end
+
+config :goods, Logistics.Notifications.ParcelBookingSMS,
+  username: System.get_env("AFRICASTALKING_USERNAME") || dev_africastalking_defaults[:username],
+  api_key: System.get_env("AFRICASTALKING_API_KEY") || dev_africastalking_defaults[:api_key],
+  from: System.get_env("AFRICASTALKING_FROM") || dev_africastalking_defaults[:from],
+  base_url:
+    System.get_env("AFRICASTALKING_BASE_URL") ||
+      "https://api.africastalking.com/version1/messaging"
+
 if config_env() == :prod do
   database_url =
     System.get_env("DATABASE_URL") ||
@@ -66,6 +85,11 @@ if config_env() == :prod do
       ip: {0, 0, 0, 0, 0, 0, 0, 0}
     ],
     secret_key_base: secret_key_base
+
+  config :goods,
+    token_signing_secret:
+      System.get_env("TOKEN_SIGNING_SECRET") ||
+        raise("Missing environment variable `TOKEN_SIGNING_SECRET`!")
 
   # ## SSL Support
   #

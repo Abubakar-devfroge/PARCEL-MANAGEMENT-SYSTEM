@@ -1,4 +1,7 @@
 import Config
+config :goods, token_signing_secret: "xsRB6vtrGGQ3/qvfmW1wMc+DtQPUCtFm"
+config :bcrypt_elixir, log_rounds: 1
+config :ash, policies: [show_policy_breakdowns?: true], disable_async?: true
 
 # Configure your database
 #
@@ -6,10 +9,10 @@ import Config
 # to provide built-in test partitioning in CI environment.
 # Run `mix help test` for more information.
 config :goods, Goods.Repo,
-  username: "postgres",
-  password: "postgres",
+  username: "good",
+  password: "Abuyezma44",
   hostname: "localhost",
-  database: "goods_test#{System.get_env("MIX_TEST_PARTITION")}",
+  database: "goods#{System.get_env("MIX_TEST_PARTITION")}",
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: System.schedulers_online() * 2
 

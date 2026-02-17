@@ -90,6 +90,7 @@ defmodule GoodsWeb do
       # Common modules used in templates
       alias Phoenix.LiveView.JS
       alias GoodsWeb.Layouts
+      alias GoodsWeb.Navigation
 
       # Routes generation with the ~p sigil
       unquote(verified_routes())

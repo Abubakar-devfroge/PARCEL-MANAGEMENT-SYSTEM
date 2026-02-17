@@ -1,0 +1,85 @@
+<Layouts.app flash={@flash}>
+  <.header>
+    <:actions>
+      <.button navigate={~p"/parcel_bookings"}>
+        <.icon name="hero-arrow-left" />
+      </.button>
+
+      <.button
+        variant="primary"
+        navigate={~p"/parcel_bookings/#{@parcel_booking.id}/edit?return_to=show"}
+      >
+        <.icon name="hero-pencil-square" /> Edit parcel booking
+      </.button>
+    </:actions>
+  </.header>
+
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="px-4 sm:px-0">
+      <h3 class="text-base/7 font-semibold text-gray-900">
+        PARCEL NO: {@parcel_booking.parcel_number}
+      </h3>
+    </div>
+    <div class="mt-6 border-t border-gray-100">
+      <dl class="divide-y divide-gray-100">
+        <div class="px-6 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm/6 font-medium text-gray-900">SENDER NAME</dt>
+          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+            {@parcel_booking.sender_name}
+          </dd>
+        </div>
+        <div class="px-6 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm/6 font-medium text-gray-900">SENDER ID</dt>
+          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+            {@parcel_booking.sender_id}
+          </dd>
+        </div>
+        <div class="px-6 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm/6 font-medium text-gray-900">SENDER PHONE</dt>
+          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+            {@parcel_booking.sender_phone}
+          </dd>
+        </div>
+        <div class="px-6 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm/6 font-medium text-gray-900">RECEIVER NAME</dt>
+          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+            {@parcel_booking.receiver_name}
+          </dd>
+        </div>
+        <div class="px-6 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm/6 font-medium text-gray-900">RECEIVER PHONE</dt>
+          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+            {@parcel_booking.receiver_phone}
+          </dd>
+        </div>
+        <div class="px-6 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm/6 font-medium text-gray-900">PARCEL DESTINATION</dt>
+          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+            {@parcel_booking.destination}
+          </dd>
+        </div>
+
+        <div class="px-6 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm/6 font-medium text-gray-900">PARCEL TYPE</dt>
+          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+            {@parcel_booking.parcel_type}
+          </dd>
+        </div>
+
+        <div class="px-6 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm/6 font-medium text-gray-900">PARCEL QUANTITY</dt>
+          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+            {@parcel_booking.quantity}
+          </dd>
+        </div>
+
+        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+          <dt class="text-sm/6 font-medium text-gray-900">PRICE</dt>
+          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+            {@parcel_booking.price}
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</Layouts.app>

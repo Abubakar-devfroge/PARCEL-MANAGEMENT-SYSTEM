@@ -1,11 +1,12 @@
 import Config
+config :ash, policies: [show_policy_breakdowns?: true]
 
 # Configure your database
 config :goods, Goods.Repo,
-  username: "postgres",
-  password: "postgres",
+  username: "good",
+  password: "Abuyezma44",
   hostname: "localhost",
-  database: "goods_dev",
+  database: "goods",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
@@ -68,7 +69,7 @@ config :goods, GoodsWeb.Endpoint,
   ]
 
 # Enable dev routes for dashboard and mailbox
-config :goods, dev_routes: true
+config :goods, dev_routes: true, token_signing_secret: "KIstCj+Y37nWErxO/dQvZ0iNZU95MCjE"
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :default_formatter, format: "[$level] $message\n"

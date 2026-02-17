@@ -94,7 +94,12 @@ defmodule GoodsWeb.CoreComponents do
   slot :inner_block, required: true
 
   def button(%{rest: rest} = assigns) do
-    variants = %{"primary" => "btn-primary", nil => "btn-primary btn-soft"}
+    variants = %{
+      "primary" =>
+        "font-medium text-base bg-black text-white rounded-md  px-4 py-2 hover:bg-amber-700 hover:text-white  transition-colors duration-300",
+      nil =>
+        "font-medium text-base bg-gray-100 text-gray-900 rounded-md  px-4 py-2 hover:bg-gray-400 hover:text-gray-900 transition-colors duration-300"
+    }
 
     assigns =
       assign_new(assigns, :class, fn ->
@@ -288,6 +293,9 @@ defmodule GoodsWeb.CoreComponents do
             @errors != [] && (@error_class || "input-error")
           ]}
           {@rest}
+          class="w-full rounded-full border border-gray-300 bg-white px-4 py-2 text-gray-900
+    		focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10
+    		transition"
         />
       </label>
       <.error :for={msg <- @errors}>{msg}</.error>
