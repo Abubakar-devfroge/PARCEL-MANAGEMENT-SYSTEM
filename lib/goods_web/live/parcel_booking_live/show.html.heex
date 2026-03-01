@@ -14,71 +14,68 @@
     </:actions>
   </.header>
 
-  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="px-4 sm:px-0">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+    <div class="px-4 sm:px-0 mb-6">
       <h3 class="text-base/7 font-semibold text-gray-900">
         PARCEL NO: {@parcel_booking.parcel_number}
       </h3>
     </div>
-    <div class="mt-6 border-t border-gray-100">
-      <dl class="divide-y divide-gray-100">
-        <div class="px-6 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt class="text-sm/6 font-medium text-gray-900">SENDER NAME</dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-            {@parcel_booking.sender_name}
-          </dd>
-        </div>
-        <div class="px-6 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt class="text-sm/6 font-medium text-gray-900">SENDER ID</dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-            {@parcel_booking.sender_id}
-          </dd>
-        </div>
-        <div class="px-6 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt class="text-sm/6 font-medium text-gray-900">SENDER PHONE</dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-            {@parcel_booking.sender_phone}
-          </dd>
-        </div>
-        <div class="px-6 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt class="text-sm/6 font-medium text-gray-900">RECEIVER NAME</dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-            {@parcel_booking.receiver_name}
-          </dd>
-        </div>
-        <div class="px-6 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt class="text-sm/6 font-medium text-gray-900">RECEIVER PHONE</dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-            {@parcel_booking.receiver_phone}
-          </dd>
-        </div>
-        <div class="px-6 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt class="text-sm/6 font-medium text-gray-900">PARCEL DESTINATION</dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-            {@parcel_booking.destination}
-          </dd>
+
+    <div class="flow-root">
+      <dl class="divide-y divide-gray-200 text-sm *:even:bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+        <div class="grid grid-cols-1 gap-2 p-4 sm:grid-cols-3 sm:gap-6">
+          <dt class="font-medium text-gray-900">SENDER NAME:</dt>
+          <dd class="text-gray-700 sm:col-span-2">{@parcel_booking.sender_name}</dd>
         </div>
 
-        <div class="px-6 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt class="text-sm/6 font-medium text-gray-900">PARCEL TYPE</dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-            {@parcel_booking.parcel_type}
-          </dd>
+        <div class="grid grid-cols-1 gap-2 p-4 sm:grid-cols-3 sm:gap-6">
+          <dt class="font-medium text-gray-900">SENDER PHONE:</dt>
+          <dd class="text-gray-700 sm:col-span-2">{@parcel_booking.sender_phone}</dd>
         </div>
 
-        <div class="px-6 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt class="text-sm/6 font-medium text-gray-900">PARCEL QUANTITY</dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-            {@parcel_booking.quantity}
-          </dd>
+        <div class="grid grid-cols-1 gap-2 p-4 sm:grid-cols-3 sm:gap-6">
+          <dt class="font-medium text-gray-900">SENDER ID:</dt>
+          <dd class="text-gray-700 sm:col-span-2">{@parcel_booking.sender_id}</dd>
         </div>
 
-        <div class="px-4 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-          <dt class="text-sm/6 font-medium text-gray-900">PRICE</dt>
-          <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
-            {@parcel_booking.price}
-          </dd>
+        <div class="grid grid-cols-1 gap-2 p-4 sm:grid-cols-3 sm:gap-6">
+          <dt class="font-medium text-gray-900">RECEIVER NAME:</dt>
+          <dd class="text-gray-700 sm:col-span-2">{@parcel_booking.receiver_name}</dd>
         </div>
+
+        <div class="grid grid-cols-1 gap-2 p-4 sm:grid-cols-3 sm:gap-6">
+          <dt class="font-medium text-gray-900">RECEIVER PHONE:</dt>
+          <dd class="text-gray-700 sm:col-span-2">{@parcel_booking.receiver_phone}</dd>
+        </div>
+
+        <div class="grid grid-cols-1 gap-2 p-4 sm:grid-cols-3 sm:gap-6">
+          <dt class="font-medium text-gray-900">PARCEL DESTINATION:</dt>
+          <dd class="text-gray-700 sm:col-span-2">{@parcel_booking.destination}</dd>
+        </div>
+
+        <div class="grid grid-cols-1 gap-2 p-4 sm:grid-cols-3 sm:gap-6">
+          <dt class="font-medium text-gray-900">PARCEL TYPE:</dt>
+          <dd class="text-gray-700 sm:col-span-2">{@parcel_booking.parcel_type}</dd>
+        </div>
+
+        <div class="grid grid-cols-1 gap-2 p-4 sm:grid-cols-3 sm:gap-6">
+          <dt class="font-medium text-gray-900">PARCEL QUANTITY:</dt>
+          <dd class="text-gray-700 sm:col-span-2">{@parcel_booking.quantity}</dd>
+        </div>
+
+        <div class="grid grid-cols-1 gap-2 p-4 sm:grid-cols-3 sm:gap-6">
+          <dt class="font-medium text-gray-900">PARCEL PRICE:</dt>
+          <dd class="text-gray-700 sm:col-span-2">{@parcel_booking.price}</dd>
+        </div>
+
+        <%!-- <div class="grid grid-cols-1 gap-2 p-4 sm:grid-cols-3 sm:gap-6">
+          <dt class="font-medium text-gray-900">Bio</dt>
+          <dd class="text-gray-700 sm:col-span-2 leading-relaxed">
+            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Et facilis debitis explicabo
+            doloremque impedit nesciunt dolorem facere, dolor quasi veritatis quia fugit aperiam
+            aspernatur neque molestiae labore aliquam soluta architecto?
+          </dd>
+        </div> --%>
       </dl>
     </div>
   </div>

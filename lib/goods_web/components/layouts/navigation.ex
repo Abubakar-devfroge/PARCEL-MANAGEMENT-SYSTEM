@@ -19,7 +19,7 @@ defmodule GoodsWeb.Navigation do
             >
               <.link navigate={~p"/dash"} class="mb-8 flex items-center gap-3 px-1">
                 <img
-                  src={~p"/images/Logo.jpg"}
+                  src={~p"/images/favicon.webp"}
                   class="h-15 w-auto rounded-full"
                   alt="swiftly logo"
                   width="80"
@@ -208,7 +208,7 @@ defmodule GoodsWeb.Navigation do
             <div class="mb-8 flex items-center justify-between">
               <.link navigate={~p"/dash"} class="flex items-center gap-3">
                 <img
-                  src={~p"/images/Logo.jpg"}
+                  src={~p"/images/favicon.webp"}
                   class="h-10 w-auto rounded-full"
                   alt="swiftly logo"
                   width="80"
@@ -263,11 +263,11 @@ defmodule GoodsWeb.Navigation do
         </div>
       </div>
     <% else %>
-      <header class="navbar px-4 sm:px-6 lg:px-8 bg-white border-b border-gray-100 flex items-center h-20">
+      <header class="navbar px-4 sm:px-6 lg:px-8 bg-yellow-400 border-b border-yellow-400 flex items-center shadow-md h-20">
         <div class="flex-1">
           <.link navigate={~p"/"} class="flex items-center gap-2">
             <img
-              src={~p"/images/logo.svg"}
+              src={~p"/images/favicon.webp"}
               class="h-10 w-auto m-4"
               alt="swiftly logo"
               width="80"
@@ -284,16 +284,16 @@ defmodule GoodsWeb.Navigation do
             <li>
               <.link
                 navigate={~p"/sign-in"}
-                class="inline-flex  justify-center gap-x-1.5 rounded-md border border-gray-300 bg-white px-6 py-2 text-base font-medium text-gray-900  hover:bg-gray-50"
+                class="inline-flex  justify-center gap-x-1.5 rounded-md  bg-red-700 px-6 py-2 text-base font-medium text-white  hover:bg-red-800"
               >
-                Sign In
+                Log In to Swiftly
               </.link>
             </li>
           </ul>
         </div>
 
         <button
-          class="sm:hidden"
+          class="sm:hidden text-red-700 font-bold text-lg"
           aria-label="Open menu"
           phx-click={
             JS.toggle(
@@ -316,7 +316,7 @@ defmodule GoodsWeb.Navigation do
         >
           <div class="flex justify-between items-center mb-10">
             <img
-              src={~p"/images/logo.svg"}
+              src={~p"/images/favicon.webp"}
               class="h-10 w-auto"
               alt="swiftly logo"
               width="80"
@@ -336,7 +336,7 @@ defmodule GoodsWeb.Navigation do
           <nav class="flex flex-col space-y-6 text-lg">
             <.link
               navigate={~p"/sign-in"}
-              class="bg-black text-white rounded-md px-6 py-2 text-center"
+              class="bg-red-700 text-white rounded-md px-6 py-2 text-center hover:bg-gray-900 transition-colors duration-300"
             >
               Sign in
             </.link>
