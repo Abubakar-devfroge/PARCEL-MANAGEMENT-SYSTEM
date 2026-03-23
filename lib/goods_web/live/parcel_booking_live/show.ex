@@ -51,4 +51,12 @@ defmodule GoodsWeb.ParcelBookingLive.Show do
        Ash.get!(Logistics.ParcelBooking, id, actor: socket.assigns.current_user)
      )}
   end
+
+  defp format_eat_datetime(nil), do: "—"
+
+  defp format_eat_datetime(%DateTime{} = utc_datetime) do
+    utc_datetime
+    |> DateTime.add(3 * 60 * 60, :second)
+    |> Calendar.strftime("%d %b %Y %H:%M")
+  end
 end

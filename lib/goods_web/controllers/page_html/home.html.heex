@@ -1,36 +1,25 @@
 <Layouts.flash_group flash={@flash} />
 <%!-- hero --%>
-<section class="relative min-h-[70vh] flex items-center bg-black overflow-hidden">
-  <div class="absolute inset-0">
-    <img
-      src="/images/robotics.webp"
-      alt="Logistics background"
-      class="w-full h-full object-cover"
-    />
-    <div class="absolute inset-0 bg-linear-to-r from-black via-black/90 to-transparent"></div>
-  </div>
+<section class="relative overflow-hidden bg-white">
+  <div class="overflow-x-hidden">
+    <div class="pt-10 pb-8 md:pb-8 lg:pt-10 lg:pb-8">
+      <div class="relative mx-auto flex max-w-6xl flex-col px-6 lg:flex-row lg:items-center">
+        <div class="w-full text-left lg:ml-0 lg:w-1/2">
+          <h1 class="mt-4 text-4xl leading-tight font-medium sm:text-5xl md:text-6xl xl:text-7xl">
+            Grow Smarter Work Faster
+          </h1>
+        </div>
 
-  <div class="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-12">
-    <div class="max-w-3xl">
-      <h1 class="text-3xl sm:text-5xl lg:text-6xl font-medium tracking-tight text-white leading-tight">
-        Parcel Handling <br class="hidden sm:block" /> Made Easy
-      </h1>
-
-      <p class="mt-4 text-lg sm:text-xl text-gray-200 leading-relaxed max-w-xl">
-        Your one-stop-shop for parcel handling.
-      </p>
-
-      <div class="mt-10 max-w-xl">
-        <div class="relative">
-          <input
-            type="text"
-            placeholder="Enter your tracking number(s)"
-            class="w-full rounded-md border border-gray-200 bg-white px-6 py-4 pr-40 text-base text-gray-900 placeholder-gray-500 outline-none focus:outline-none"
-          />
-
-          <button class="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-md bg-red-700 px-6 py-3 text-sm font-semibold text-white hover:bg-red-800 transition">
-            Search
-          </button>
+        <div class="relative mt-8 w-full lg:mt-0 lg:w-1/2">
+          <div class="absolute inset-0 rounded-xl bg-black opacity-30 mix-blend-overlay" />
+          <div class="h-75 overflow-hidden rounded-xl sm:h-100 md:h-125 lg:h-auto">
+            <img
+              class="h-full w-full object-cover object-center"
+              src={~p"/images/hero.svg"}
+              alt="Hero Image"
+              fetchpriority="high"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -65,7 +54,7 @@
       <div class="mt-6 flex gap-4">
         <a
           href="/sign-in"
-          class="font-medium text-base bg-red-700 text-white rounded-md  px-6 py-2 hover:bg-red-800 hover:text-white transition-colors duration-300"
+          class="font-medium text-base bg-black text-white rounded-md  px-6 py-2 hover:bg-black/80 hover:text-white transition-colors duration-300"
         >
           Explore Swiftly
         </a>
@@ -121,7 +110,7 @@
 </section> --%>
 
 <%!-- Footer --%>
-<footer class="bg-white text-gray-700">
+<footer class="bg-gray-100 text-gray-700">
   <div class="mx-auto max-w-7xl px-6 py-12 grid grid-cols-1 gap-10 sm:grid-cols-2 md:grid-cols-5">
     <aside class="md:col-span-2 space-y-4">
       <span class="text-4xl tracking-tight text-gray-900 font-extrabold mb-4">

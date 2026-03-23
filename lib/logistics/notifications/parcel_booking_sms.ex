@@ -20,10 +20,14 @@ defmodule Logistics.Notifications.ParcelBookingSMS do
 
   defp sms_config do
     config = Application.get_env(:goods, __MODULE__, [])
-    username = Keyword.get(config, :username)
-    api_key = Keyword.get(config, :api_key)
-    from = Keyword.get(config, :from)
-    base_url = Keyword.get(config, :base_url, @default_base_url)
+    username = config |> Keyword.get(:username) |> normalize_config_value()
+    api_key = config |> Keyword.get(:api_key) |> normalize_config_value()
+    from = config |> Keyword.get(:from) |> normalize_config_value()
+
+    base_url =
+      config
+      |> Keyword.get(:base_url, @default_base_url)
+      |> normalize_config_value()
 
     if blank?(username) or blank?(api_key) do
       {:error, :missing_credentials}
@@ -59,10 +63,16 @@ defmodule Logistics.Notifications.ParcelBookingSMS do
     end
   end
 
-  defp handle_response(%Req.Response{status: status} = response) when status in 200..299 do
-    Logger.info("Booking SMS sent successfully via Africa's Talking")
-    _ = response
-    :ok
+  defp handle_response(%Req.Response{status: status, body: body}) when status in 200..299 do
+    case delivery_error(body) do
+      nil ->
+        Logger.info("Booking SMS sent successfully via Africa's Talking")
+        :ok
+
+      reason ->
+        Logger.warning("Africa's Talking SMS delivery failed: #{inspect(reason)}")
+        {:error, {:delivery_error, reason}}
+    end
   end
 
   defp handle_response(%Req.Response{status: status, body: body}) do
@@ -99,6 +109,37 @@ defmodule Logistics.Notifications.ParcelBookingSMS do
   end
 
   defp normalize_phone(_), do: {:error, :invalid_phone_number}
+
+  defp normalize_config_value(value) when is_binary(value), do: String.trim(value)
+  defp normalize_config_value(value), do: value
+
+  defp delivery_error(%{"SMSMessageData" => %{"Message" => message, "Recipients" => recipients}})
+       when is_binary(message) and is_list(recipients) do
+    cond do
+      String.contains?(message, "InvalidSenderId") ->
+        :invalid_sender_id
+
+      recipients == [] ->
+        {:no_recipients, message}
+
+      true ->
+        failed_recipients = Enum.reject(recipients, &recipient_successful?/1)
+
+        if failed_recipients == [] do
+          nil
+        else
+          {:recipient_failures, failed_recipients}
+        end
+    end
+  end
+
+  defp delivery_error(_), do: nil
+
+  defp recipient_successful?(%{"status" => status}) when is_binary(status) do
+    String.contains?(status, "Success") or String.contains?(status, "Queued")
+  end
+
+  defp recipient_successful?(_), do: false
 
   defp blank?(value) when value in [nil, ""], do: true
   defp blank?(value) when is_binary(value), do: String.trim(value) == ""

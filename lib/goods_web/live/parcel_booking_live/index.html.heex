@@ -5,13 +5,23 @@
         <h1 class="text-xl font-semibold text-gray-900">Parcel Bookings</h1>
         <p class="mt-1 text-sm text-gray-500">Manage and track all your parcel shipments</p>
 
-        <.link
-          id="new-parcel-btn"
-          navigate={~p"/parcel_bookings/new"}
-          class="inline-flex items-center justify-center rounded-md mt-2 bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-amber-700"
-        >
-          New Parcel
-        </.link>
+        <div class="mt-2 flex items-center gap-2">
+          <.link
+            id="new-parcel-btn"
+            navigate={~p"/parcel_bookings/new"}
+            class="inline-flex items-center justify-center rounded-md bg-gray-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-amber-700"
+          >
+            New Parcel
+          </.link>
+
+          <.link
+            id="parcel-reports-btn"
+            navigate={~p"/parcel_reports"}
+            class="inline-flex items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-700 inset-ring inset-ring-gray-300 transition hover:bg-gray-50"
+          >
+            Reports
+          </.link>
+        </div>
       </div>
     </div>
 
@@ -74,7 +84,7 @@
               <thead class="bg-gray-50 text-gray-700">
                 <tr>
                   <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide sm:px-6">
-                    Parcel ID
+                    Parcel NO:
                   </th>
                   <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide sm:px-6">
                     From
@@ -109,7 +119,7 @@
                     phx-click={JS.navigate(~p"/parcel_bookings/#{parcel.id}")}
                     class="px-4 py-3 font-medium sm:px-6"
                   >
-                    {parcel.parcel_number}
+                    {parcel.parcel_number |> String.split("-") |> List.last()}
                   </td>
                   <td
                     phx-click={JS.navigate(~p"/parcel_bookings/#{parcel.id}")}

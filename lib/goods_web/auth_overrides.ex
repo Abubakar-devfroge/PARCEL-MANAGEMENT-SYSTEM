@@ -19,7 +19,7 @@ defmodule GoodsWeb.AuthOverrides do
 
   override AshAuthentication.Phoenix.Components.Banner do
     set :image_url, false
-    set :text_class, "bg-red-500"
+    set :text_class, "bg-black"
   end
 
   # override AshAuthentication.Phoenix.Components.SignIn do
@@ -43,19 +43,19 @@ defmodule GoodsWeb.AuthOverrides do
   end
 
   override Components.SignIn do
-    set :strategy_class, "w-full max-w-md p-4"
+    set :strategy_class, "w-full max-w-xl p-6"
   end
 
   override Components.Reset do
-    set :strategy_class, "w-full max-w-md p-4"
+    set :strategy_class, "w-full max-w-xl p-6"
   end
 
   override Components.Confirm do
-    set :strategy_class, "w-full max-w-md p-4"
+    set :strategy_class, "w-full max-w-xl p-6"
   end
 
   override Components.MagicLink do
-    set :root_class, "w-full max-w-md p-4"
+    set :root_class, "w-full max-w-xl p-6"
   end
 
   override Components.Password do
@@ -71,14 +71,14 @@ defmodule GoodsWeb.AuthOverrides do
         "w-full rounded-md border border-gray-300 bg-white px-6 py-2 text-gray-900 focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10 transition"
 
     set :input_class_with_error,
-        "w-full rounded-md border border-red-500 bg-white px-6 py-2 text-gray-900 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 transition"
+        "w-full rounded-md border border-black bg-white px-6 py-2 text-gray-900 focus:border-black focus:ring-4 focus:ring-black/10 transition"
 
     set :submit_class,
-        "font-semibold text-base bg-black text-white rounded-md w-full px-6 py-2 hover:bg-gray-800 hover:text-white transition-colors duration-300"
+        "font-semibold text-base bg-black text-white rounded-md w-full px-6 py-2 hover:bg-black/80 hover:text-white transition-colors duration-300"
   end
 
   override Components.MagicLink.Input do
     set :submit_class,
-        "font-semibold text-base bg-black text-white rounded-md w-full px-6 py-2 hover:bg-gray-800 hover:text-white transition-colors duration-300"
+        "font-semibold text-base bg-black text-white rounded-md w-full px-6 py-2 hover:bg-black/80 hover:text-white transition-colors duration-300"
   end
 end

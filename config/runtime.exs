@@ -25,9 +25,9 @@ config :goods, GoodsWeb.Endpoint, http: [port: String.to_integer(System.get_env(
 dev_africastalking_defaults =
   if config_env() == :dev do
     %{
-      username: "parceltracker",
-      api_key: "atsk_de1207fb8f357cb6a81caec92b4a98dfdd73ee0c40f8ac9a81841f45ecfcd040f6a0ec06",
-      from: "PARCEL"
+      username: "sandbox",
+      api_key: "atsk_ae5de477a578cc197c99bf630eb7009f6993871f5765cae1a5410035052266f773313ab3",
+      base_url: "http://api.sandbox.africastalking.com/version1/messaging"
     }
   else
     %{}
@@ -39,6 +39,7 @@ config :goods, Logistics.Notifications.ParcelBookingSMS,
   from: System.get_env("AFRICASTALKING_FROM") || dev_africastalking_defaults[:from],
   base_url:
     System.get_env("AFRICASTALKING_BASE_URL") ||
+      dev_africastalking_defaults[:base_url] ||
       "https://api.africastalking.com/version1/messaging"
 
 if config_env() == :prod do

@@ -6,9 +6,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="csrf-token" content={get_csrf_token()} />
-    <.live_title default="Goods" suffix=" · Phoenix Framework">
+    <.live_title default="Swiftly" suffix=" · Parcel Management">
       {assigns[:page_title]}
     </.live_title>
+    <link rel="icon" type="image/x-icon" href={~p"/images/logo.png"} class="h-10 w-auto" />
+
     <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
     </script>

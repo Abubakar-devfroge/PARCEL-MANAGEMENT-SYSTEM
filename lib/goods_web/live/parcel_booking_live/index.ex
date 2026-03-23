@@ -17,6 +17,14 @@ defmodule GoodsWeb.ParcelBookingLive.Index do
      |> stream(:parcel_bookings, parcel_bookings)}
   end
 
+  defp format_eat_datetime(nil), do: "—"
+
+  defp format_eat_datetime(%DateTime{} = utc_datetime) do
+    utc_datetime
+    |> DateTime.add(3 * 60 * 60, :second)
+    |> Calendar.strftime("%d %b %Y %H:%M")
+  end
+
   @impl true
   def handle_event("search", %{"search" => %{"q" => query}}, socket) do
     parcel_bookings = list_parcel_bookings(socket)
@@ -61,6 +69,7 @@ defmodule GoodsWeb.ParcelBookingLive.Index do
 
   defp list_parcel_bookings(socket) do
     Ash.read!(Logistics.ParcelBooking, actor: socket.assigns[:current_user])
+    |> Enum.sort_by(& &1.inserted_at, {:desc, DateTime})
   end
 
   defp filter_bookings(parcel_bookings, query) do
@@ -101,7 +110,9 @@ defmodule GoodsWeb.ParcelBookingLive.Index do
       parcel_booking.receiver_name,
       parcel_booking.receiver_id,
       parcel_booking.receiver_phone,
-      parcel_booking.parcel_type
+      parcel_booking.parcel_type,
+      parcel_booking.destination,
+      format_eat_datetime(parcel_booking.inserted_at)
     ]
     |> Enum.map(&normalize_value/1)
   end

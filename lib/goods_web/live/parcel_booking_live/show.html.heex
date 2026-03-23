@@ -68,14 +68,12 @@
           <dd class="text-gray-700 sm:col-span-2">{@parcel_booking.price}</dd>
         </div>
 
-        <%!-- <div class="grid grid-cols-1 gap-2 p-4 sm:grid-cols-3 sm:gap-6">
-          <dt class="font-medium text-gray-900">Bio</dt>
+        <div class="grid grid-cols-1 gap-2 p-4 sm:grid-cols-3 sm:gap-6">
+          <dt class="font-medium text-gray-900">DATE BOOKED:</dt>
           <dd class="text-gray-700 sm:col-span-2 leading-relaxed">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Et facilis debitis explicabo
-            doloremque impedit nesciunt dolorem facere, dolor quasi veritatis quia fugit aperiam
-            aspernatur neque molestiae labore aliquam soluta architecto?
+            {@parcel_booking.inserted_at |> format_eat_datetime()}
           </dd>
-        </div> --%>
+        </div>
       </dl>
     </div>
   </div>

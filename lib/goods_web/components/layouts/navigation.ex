@@ -60,7 +60,7 @@ defmodule GoodsWeb.Navigation do
                 </.link>
 
                 <.link
-                  navigate={~p"/profile"}
+                  navigate={~p"/parcel_reports"}
                   class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
                 >
                   <.icon
@@ -263,11 +263,11 @@ defmodule GoodsWeb.Navigation do
         </div>
       </div>
     <% else %>
-      <header class="navbar px-4 sm:px-6 lg:px-8 bg-yellow-400 border-b border-yellow-400 flex items-center shadow-md h-20">
+      <header class="navbar px-4 sm:px-6 lg:px-8 bg-white  flex items-center shadow-md h-16">
         <div class="flex-1">
           <.link navigate={~p"/"} class="flex items-center gap-2">
             <img
-              src={~p"/images/favicon.webp"}
+              src={~p"/images/logo1.svg"}
               class="h-10 w-auto m-4"
               alt="swiftly logo"
               width="80"
@@ -284,9 +284,9 @@ defmodule GoodsWeb.Navigation do
             <li>
               <.link
                 navigate={~p"/sign-in"}
-                class="inline-flex  justify-center gap-x-1.5 rounded-md  bg-red-700 px-6 py-2 text-base font-medium text-white  hover:bg-red-800"
+                class="inline-flex  justify-center gap-x-1.5 rounded-md  bg-black px-6 py-2 text-base font-medium text-white  hover:bg-black/80"
               >
-                Log In to Swiftly
+                Log In
               </.link>
             </li>
           </ul>

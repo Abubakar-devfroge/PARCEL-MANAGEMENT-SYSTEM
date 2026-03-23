@@ -28,6 +28,8 @@ defmodule GoodsWeb.Router do
   scope "/", GoodsWeb do
     pipe_through([:browser, :authenticated_browser])
 
+    get("/parcel_reports/export", ParcelReportExportController, :export)
+
     ash_authentication_live_session :authenticated_routes,
       on_mount: [{GoodsWeb.LiveUserAuth, :live_user_required}] do
       # in each liveview, add one of the following at the top of the module:
@@ -47,6 +49,7 @@ defmodule GoodsWeb.Router do
       live("/parcel_bookings/:id/edit", ParcelBookingLive.Form, :edit)
       live("/parcel_bookings/:id", ParcelBookingLive.Show, :show)
       live("/parcel_bookings/:id/show/edit", ParcelBookingLive.Show, :edit)
+      live("/parcel_reports", ParcelReportLive, :index)
       live("/profile", ProfileLive, :index)
     end
   end

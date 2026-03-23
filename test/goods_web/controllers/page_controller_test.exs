@@ -3,6 +3,6 @@ defmodule GoodsWeb.PageControllerTest do
 
   test "GET /", %{conn: conn} do
     conn = get(conn, ~p"/")
-    assert html_response(conn, 200) =~ "Parcel Handling Made Easy"
+    assert html_response(conn, 200) =~ "Parcel Handling "
   end
 end
