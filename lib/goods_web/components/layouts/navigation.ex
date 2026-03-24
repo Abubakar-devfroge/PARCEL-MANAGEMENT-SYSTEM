@@ -282,12 +282,13 @@ defmodule GoodsWeb.Navigation do
         <div class="hidden sm:flex">
           <ul class="menu menu-horizontal w-full relative z-10 flex items-center gap-4 px-4 py-2 sm:px-6 lg:px-8 justify-end">
             <li>
+            <.button variant="primary">
               <.link
                 navigate={~p"/sign-in"}
-                class="inline-flex  justify-center gap-x-1.5 rounded-md  bg-black px-6 py-2 text-base font-medium text-white  hover:bg-black/80"
               >
                 Log In
               </.link>
+              </.button>
             </li>
           </ul>
         </div>

@@ -190,7 +190,9 @@ defmodule GoodsWeb.ParcelBookingLive.Form do
           :ok
 
         {:error, reason} ->
-          Logger.warning("Failed to send parcel booking SMS notification: #{inspect(reason)}")
+          Logger.warning(
+            "Failed to send parcel booking SMS notification for booking #{parcel_booking.id} (#{parcel_booking.parcel_number}): #{inspect(reason)}"
+          )
       end
     end)
 

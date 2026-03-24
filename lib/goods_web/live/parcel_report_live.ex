@@ -22,6 +22,7 @@ defmodule GoodsWeb.ParcelReportLive do
      |> assign(:filtered_bookings_count, length(filtered_bookings))
      |> assign(:filtered_bookings, filtered_bookings)
      |> assign(:report_data, report_data)
+     |> assign(:chart_payload, build_chart_payload(report_data, filtered_bookings))
      |> assign(:alerts, build_alerts(report_data, filtered_bookings))
      |> assign(:last_updated_at, DateTime.utc_now())
      |> stream(:custom_rows, filtered_bookings)}
@@ -56,6 +57,7 @@ defmodule GoodsWeb.ParcelReportLive do
     |> assign(:filtered_bookings_count, length(filtered_bookings))
     |> assign(:filtered_bookings, filtered_bookings)
     |> assign(:report_data, report_data)
+    |> assign(:chart_payload, build_chart_payload(report_data, filtered_bookings))
     |> assign(:alerts, build_alerts(report_data, filtered_bookings))
     |> assign(:last_updated_at, DateTime.utc_now())
     |> stream(:custom_rows, filtered_bookings, reset: true)
@@ -282,6 +284,52 @@ defmodule GoodsWeb.ParcelReportLive do
     }
   end
 
+  defp build_chart_payload(report_data, filtered_bookings) do
+    activity = report_data.parcel_activity
+
+    %{
+      activity_distribution: %{
+        labels: ["Daily", "Weekly", "Monthly"],
+        values: [activity.daily_shipments, activity.weekly_shipments, activity.monthly_shipments]
+      },
+      revenue_by_type: %{
+        labels:
+          Enum.map(Enum.take(report_data.financial_reports.revenue_by_type, 6), & &1.parcel_type),
+        values:
+          Enum.map(Enum.take(report_data.financial_reports.revenue_by_type, 6), fn row ->
+            decimal_to_float(row.revenue)
+          end)
+      },
+      shipments_by_route: %{
+        labels:
+          Enum.map(Enum.take(report_data.operational_reports.route_counts, 8), & &1.destination),
+        values:
+          Enum.map(Enum.take(report_data.operational_reports.route_counts, 8), fn row ->
+            row.total_routes
+          end)
+      },
+      shipments_trend: weekly_shipments_trend(filtered_bookings)
+    }
+    |> Jason.encode!()
+  end
+
+  defp weekly_shipments_trend(filtered_bookings) do
+    today = Date.utc_today()
+
+    days =
+      6..0//-1
+      |> Enum.map(fn offset -> Date.add(today, -offset) end)
+
+    grouped_counts =
+      filtered_bookings
+      |> Enum.group_by(fn booking -> datetime_to_date(booking.inserted_at) end)
+
+    %{
+      labels: Enum.map(days, &Calendar.strftime(&1, "%d %b")),
+      values: Enum.map(days, fn day -> grouped_counts |> Map.get(day, []) |> length() end)
+    }
+  end
+
   defp map_totals(grouped_data) do
     grouped_data
     |> Enum.map(fn {key, bookings} -> %{key: key, total_shipments: length(bookings)} end)
@@ -306,6 +354,16 @@ defmodule GoodsWeb.ParcelReportLive do
     |> Decimal.round(2)
     |> Decimal.to_string(:normal)
   end
+
+  defp decimal_to_float(%Decimal{} = value) do
+    value
+    |> Decimal.round(2)
+    |> Decimal.to_float()
+  end
+
+  defp decimal_to_float(value) when is_integer(value), do: value * 1.0
+  defp decimal_to_float(value) when is_float(value), do: Float.round(value, 2)
+  defp decimal_to_float(_), do: 0.0
 
   defp build_alerts(report_data, filtered_bookings) do
     pending_count = report_data.financial_reports.pending_payments_count
@@ -359,479 +417,5 @@ defmodule GoodsWeb.ParcelReportLive do
       })
 
     "/parcel_reports/export?" <> query
-  end
-
-  @impl true
-  def render(assigns) do
-    ~H"""
-    <Layouts.app flash={@flash}>
-      <section class="mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 lg:px-8">
-        <div class="rounded-md border border-gray-200 bg-white">
-          <div class="border-b border-gray-200 bg-gray-50 px-4 py-3 sm:px-6">
-            <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-              <div>
-                <h1 class="text-xl font-semibold text-gray-900">Parcel Management Reports</h1>
-                <p class="mt-1 text-sm text-gray-500">
-                  Live operational and financial reporting from parcel bookings
-                </p>
-              </div>
-
-              <div class="text-sm text-gray-500">
-                Last updated: {format_eat_datetime(@last_updated_at)}
-              </div>
-            </div>
-          </div>
-
-          <div class="px-4 py-4 sm:px-6">
-            <form
-              id="reports-filter-form"
-              phx-change="filter"
-              class="grid grid-cols-1 gap-3 lg:grid-cols-6"
-            >
-              <.input
-                name="filters[query]"
-                value={@filters.query}
-                type="search"
-                label="Search"
-                phx-debounce="300"
-                placeholder="Parcel, sender, receiver"
-              />
-
-              <.input
-                name="filters[parcel_number]"
-                value={@filters.parcel_number}
-                type="text"
-                label="Parcel Number"
-                phx-debounce="300"
-              />
-
-              <.input
-                name="filters[sender]"
-                value={@filters.sender}
-                type="text"
-                label="Sender"
-                phx-debounce="300"
-              />
-
-              <.input
-                name="filters[receiver]"
-                value={@filters.receiver}
-                type="text"
-                label="Receiver"
-                phx-debounce="300"
-              />
-
-              <.input
-                name="filters[parcel_type]"
-                value={@filters.parcel_type}
-                type="text"
-                label="Type"
-                phx-debounce="300"
-              />
-
-              <div class="grid grid-cols-2 gap-3 lg:col-span-1">
-                <.input name="filters[date_from]" value={@filters.date_from} type="date" label="From" />
-                <.input name="filters[date_to]" value={@filters.date_to} type="date" label="To" />
-              </div>
-            </form>
-
-            <div class="mt-3 flex items-center justify-between">
-              <p class="text-sm text-gray-600">
-                Showing {@filtered_bookings_count} of {@all_bookings_count} bookings
-              </p>
-
-              <button
-                id="reset-reports-filters"
-                type="button"
-                phx-click="reset_filters"
-                class="inline-flex items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-700 inset-ring inset-ring-gray-300 transition hover:bg-gray-50"
-              >
-                Reset filters
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div
-          :for={alert <- @alerts}
-          class={["rounded-md border px-4 py-3 text-sm", alert_class(alert.level)]}
-        >
-          {alert.message}
-        </div>
-
-        <div class="rounded-md border border-gray-200 bg-white">
-          <div class="flex items-center justify-between border-b border-gray-200 bg-gray-50 px-4 py-3 sm:px-6">
-            <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-700">
-              Parcel Activity Reports
-            </h2>
-
-            <div class="flex gap-2">
-              <.link
-                id="export-activity-csv"
-                href={export_path("activity", "csv", @filters)}
-                class="inline-flex rounded-md bg-white px-3 py-2 text-xs font-semibold text-gray-700 inset-ring inset-ring-gray-300 hover:bg-gray-50"
-              >
-                Export CSV
-              </.link>
-              <.link
-                id="export-activity-excel"
-                href={export_path("activity", "excel", @filters)}
-                class="inline-flex rounded-md bg-gray-900 px-3 py-2 text-xs font-semibold text-white hover:bg-gray-800"
-              >
-                Export Excel
-              </.link>
-            </div>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200 text-sm">
-              <tbody class="divide-y divide-gray-200 bg-white text-gray-900">
-                <tr>
-                  <th class="bg-gray-50 px-4 py-3 text-left font-medium text-gray-700 sm:px-6">
-                    Daily Shipments
-                  </th>
-                  <td class="px-4 py-3 sm:px-6">{@report_data.parcel_activity.daily_shipments}</td>
-                </tr>
-                <tr>
-                  <th class="bg-gray-50 px-4 py-3 text-left font-medium text-gray-700 sm:px-6">
-                    Weekly Shipments
-                  </th>
-                  <td class="px-4 py-3 sm:px-6">{@report_data.parcel_activity.weekly_shipments}</td>
-                </tr>
-                <tr>
-                  <th class="bg-gray-50 px-4 py-3 text-left font-medium text-gray-700 sm:px-6">
-                    Monthly Shipments
-                  </th>
-                  <td class="px-4 py-3 sm:px-6">{@report_data.parcel_activity.monthly_shipments}</td>
-                </tr>
-                <tr>
-                  <th class="bg-gray-50 px-4 py-3 text-left font-medium text-gray-700 sm:px-6">
-                    Cancelled Parcels
-                  </th>
-                  <td class="px-4 py-3 sm:px-6">
-                    {@report_data.parcel_activity.cancelled_shipments}
-                  </td>
-                </tr>
-                <tr>
-                  <th class="bg-gray-50 px-4 py-3 text-left font-medium text-gray-700 sm:px-6">
-                    Returned Parcels
-                  </th>
-                  <td class="px-4 py-3 sm:px-6">{@report_data.parcel_activity.returned_shipments}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="rounded-md border border-gray-200 bg-white">
-          <div class="flex items-center justify-between border-b border-gray-200 bg-gray-50 px-4 py-3 sm:px-6">
-            <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-700">
-              Customer-Focused Reports
-            </h2>
-
-            <div class="flex gap-2">
-              <.link
-                id="export-customers-csv"
-                href={export_path("customers", "csv", @filters)}
-                class="inline-flex rounded-md bg-white px-3 py-2 text-xs font-semibold text-gray-700 inset-ring inset-ring-gray-300 hover:bg-gray-50"
-              >
-                Export CSV
-              </.link>
-              <.link
-                id="export-customers-excel"
-                href={export_path("customers", "excel", @filters)}
-                class="inline-flex rounded-md bg-gray-900 px-3 py-2 text-xs font-semibold text-white hover:bg-gray-800"
-              >
-                Export Excel
-              </.link>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 gap-4 border-b border-gray-200 px-4 py-4 sm:grid-cols-2 sm:px-6">
-            <div class="rounded-md border border-gray-200 bg-gray-50 px-4 py-3">
-              <p class="text-xs font-semibold uppercase tracking-wide text-gray-600">
-                Sender Totals (Top 10)
-              </p>
-              <p class="mt-1 text-lg font-semibold text-gray-900">
-                {length(@report_data.customer_reports.sender_totals)}
-              </p>
-            </div>
-            <div class="rounded-md border border-gray-200 bg-gray-50 px-4 py-3">
-              <p class="text-xs font-semibold uppercase tracking-wide text-gray-600">
-                Receiver Totals (Top 10)
-              </p>
-              <p class="mt-1 text-lg font-semibold text-gray-900">
-                {length(@report_data.customer_reports.receiver_totals)}
-              </p>
-            </div>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200 text-sm">
-              <thead class="bg-gray-50 text-gray-700">
-                <tr>
-                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide sm:px-6">
-                    Sender
-                  </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide sm:px-6">
-                    Phone
-                  </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide sm:px-6">
-                    Total Shipments
-                  </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide sm:px-6">
-                    Revenue
-                  </th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-gray-200 bg-white text-gray-900">
-                <tr :for={row <- @report_data.customer_reports.top_customers}>
-                  <td class="px-4 py-3 font-medium sm:px-6">{row.sender_name}</td>
-                  <td class="px-4 py-3 sm:px-6">{row.sender_phone}</td>
-                  <td class="px-4 py-3 sm:px-6">{row.total_shipments}</td>
-                  <td class="px-4 py-3 sm:px-6">KES {decimal_to_money(row.total_revenue)}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="rounded-md border border-gray-200 bg-white">
-          <div class="flex items-center justify-between border-b border-gray-200 bg-gray-50 px-4 py-3 sm:px-6">
-            <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-700">
-              Financial Reports
-            </h2>
-
-            <div class="flex gap-2">
-              <.link
-                id="export-financial-csv"
-                href={export_path("financial", "csv", @filters)}
-                class="inline-flex rounded-md bg-white px-3 py-2 text-xs font-semibold text-gray-700 inset-ring inset-ring-gray-300 hover:bg-gray-50"
-              >
-                Export CSV
-              </.link>
-              <.link
-                id="export-financial-excel"
-                href={export_path("financial", "excel", @filters)}
-                class="inline-flex rounded-md bg-gray-900 px-3 py-2 text-xs font-semibold text-white hover:bg-gray-800"
-              >
-                Export Excel
-              </.link>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 gap-4 border-b border-gray-200 px-4 py-4 sm:grid-cols-2 sm:px-6">
-            <div class="rounded-md border border-gray-200 bg-gray-50 px-4 py-3">
-              <p class="text-xs font-semibold uppercase tracking-wide text-gray-600">
-                Pending Payments
-              </p>
-              <p class="mt-1 text-lg font-semibold text-gray-900">
-                {@report_data.financial_reports.pending_payments_count}
-              </p>
-            </div>
-            <div class="rounded-md border border-gray-200 bg-gray-50 px-4 py-3">
-              <p class="text-xs font-semibold uppercase tracking-wide text-gray-600">
-                Pending Amount
-              </p>
-              <p class="mt-1 text-lg font-semibold text-gray-900">
-                KES {decimal_to_money(@report_data.financial_reports.pending_payments_amount)}
-              </p>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 gap-4 px-4 py-4 lg:grid-cols-2 sm:px-6">
-            <div class="overflow-x-auto rounded-md border border-gray-200">
-              <table class="min-w-full divide-y divide-gray-200 text-sm">
-                <thead class="bg-gray-50 text-gray-700">
-                  <tr>
-                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide">
-                      Parcel Type
-                    </th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide">
-                      Shipments
-                    </th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide">
-                      Revenue
-                    </th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200 bg-white text-gray-900">
-                  <tr :for={row <- @report_data.financial_reports.revenue_by_type}>
-                    <td class="px-4 py-3">{row.parcel_type}</td>
-                    <td class="px-4 py-3">{row.shipments}</td>
-                    <td class="px-4 py-3">KES {decimal_to_money(row.revenue)}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-
-            <div class="overflow-x-auto rounded-md border border-gray-200">
-              <table class="min-w-full divide-y divide-gray-200 text-sm">
-                <thead class="bg-gray-50 text-gray-700">
-                  <tr>
-                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide">
-                      Destination
-                    </th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide">
-                      Shipments
-                    </th>
-                    <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide">
-                      Revenue
-                    </th>
-                  </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200 bg-white text-gray-900">
-                  <tr :for={row <- @report_data.financial_reports.revenue_by_location}>
-                    <td class="px-4 py-3">{row.destination}</td>
-                    <td class="px-4 py-3">{row.shipments}</td>
-                    <td class="px-4 py-3">KES {decimal_to_money(row.revenue)}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-
-        <div class="rounded-md border border-gray-200 bg-white">
-          <div class="flex items-center justify-between border-b border-gray-200 bg-gray-50 px-4 py-3 sm:px-6">
-            <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-700">
-              Operational Efficiency Reports
-            </h2>
-
-            <div class="flex gap-2">
-              <.link
-                id="export-operations-csv"
-                href={export_path("operations", "csv", @filters)}
-                class="inline-flex rounded-md bg-white px-3 py-2 text-xs font-semibold text-gray-700 inset-ring inset-ring-gray-300 hover:bg-gray-50"
-              >
-                Export CSV
-              </.link>
-              <.link
-                id="export-operations-excel"
-                href={export_path("operations", "excel", @filters)}
-                class="inline-flex rounded-md bg-gray-900 px-3 py-2 text-xs font-semibold text-white hover:bg-gray-800"
-              >
-                Export Excel
-              </.link>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 gap-4 border-b border-gray-200 px-4 py-4 sm:grid-cols-2 sm:px-6">
-            <div class="rounded-md border border-gray-200 bg-gray-50 px-4 py-3">
-              <p class="text-xs font-semibold uppercase tracking-wide text-gray-600">
-                Average Volume
-              </p>
-              <p class="mt-1 text-lg font-semibold text-gray-900">
-                {@report_data.operational_reports.average_volume}
-              </p>
-            </div>
-            <div class="rounded-md border border-gray-200 bg-gray-50 px-4 py-3">
-              <p class="text-xs font-semibold uppercase tracking-wide text-gray-600">
-                Employee Handling
-              </p>
-              <p class="mt-1 text-lg font-semibold text-gray-900">
-                {hd(@report_data.operational_reports.employee_handling).total_shipments}
-              </p>
-            </div>
-          </div>
-
-          <div class="overflow-x-auto px-4 py-4 sm:px-6">
-            <table class="min-w-full divide-y divide-gray-200 text-sm">
-              <thead class="bg-gray-50 text-gray-700">
-                <tr>
-                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide">
-                    Route
-                  </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide">
-                    Shipment Count
-                  </th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-gray-200 bg-white text-gray-900">
-                <tr :for={row <- @report_data.operational_reports.route_counts}>
-                  <td class="px-4 py-3">{row.destination}</td>
-                  <td class="px-4 py-3">{row.total_routes}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div class="rounded-md border border-gray-200 bg-white">
-          <div class="flex items-center justify-between border-b border-gray-200 bg-gray-50 px-4 py-3 sm:px-6">
-            <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-700">
-              Custom / Ad-Hoc Reports
-            </h2>
-
-            <div class="flex gap-2">
-              <.link
-                id="export-custom-csv"
-                href={export_path("custom", "csv", @filters)}
-                class="inline-flex rounded-md bg-white px-3 py-2 text-xs font-semibold text-gray-700 inset-ring inset-ring-gray-300 hover:bg-gray-50"
-              >
-                Export CSV
-              </.link>
-              <.link
-                id="export-custom-excel"
-                href={export_path("custom", "excel", @filters)}
-                class="inline-flex rounded-md bg-gray-900 px-3 py-2 text-xs font-semibold text-white hover:bg-gray-800"
-              >
-                Export Excel
-              </.link>
-            </div>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="min-w-full divide-y divide-gray-200 text-sm">
-              <thead class="bg-gray-50 text-gray-700">
-                <tr>
-                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide sm:px-6">
-                    Parcel
-                  </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide sm:px-6">
-                    Sender
-                  </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide sm:px-6">
-                    Receiver
-                  </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide sm:px-6">
-                    Destination
-                  </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide sm:px-6">
-                    Type
-                  </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide sm:px-6">
-                    Qty
-                  </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide sm:px-6">
-                    Price
-                  </th>
-                  <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide sm:px-6">
-                    Booked
-                  </th>
-                </tr>
-              </thead>
-              <tbody
-                id="custom_reports_rows"
-                phx-update="stream"
-                class="divide-y divide-gray-200 bg-white text-gray-900"
-              >
-                <tr :for={{id, booking} <- @streams.custom_rows} id={id}>
-                  <td class="px-4 py-3 font-medium sm:px-6">{booking.parcel_number}</td>
-                  <td class="px-4 py-3 sm:px-6">{booking.sender_name}</td>
-                  <td class="px-4 py-3 sm:px-6">{booking.receiver_name}</td>
-                  <td class="px-4 py-3 sm:px-6">{booking.destination}</td>
-                  <td class="px-4 py-3 sm:px-6">{booking.parcel_type}</td>
-                  <td class="px-4 py-3 sm:px-6">{booking.quantity}</td>
-                  <td class="px-4 py-3 sm:px-6">KES {decimal_to_money(booking.price)}</td>
-                  <td class="px-4 py-3 sm:px-6">{format_eat_datetime(booking.inserted_at)}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-    </Layouts.app>
-    """
   end
 end

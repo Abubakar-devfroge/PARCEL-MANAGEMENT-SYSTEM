@@ -1,12 +1,17 @@
 defmodule GoodsWeb.ProfileLive do
   use GoodsWeb, :live_view
 
+  require Ash.Query
+
   @impl true
   def mount(_params, _session, socket) do
+    business_profile = get_business_profile(socket.assigns.current_user)
+
     {:ok,
      socket
      |> assign(:page_title, "Profile")
-     |> assign(:active_tab, "personal")}
+     |> assign(:active_tab, "personal")
+     |> assign(:business_profile, business_profile)}
   end
 
   @impl true
@@ -74,9 +79,30 @@ defmodule GoodsWeb.ProfileLive do
                     <td class="px-4 py-3 break-all">{@current_user.email}</td>
                   </tr>
                   <tr>
-                    <th class="bg-gray-50 px-4 py-3 text-left font-medium text-gray-700">User ID</th>
-                    <td class="px-4 py-3 break-all">{@current_user.id}</td>
+                    <th class="bg-gray-50 px-4 py-3 text-left font-medium text-gray-700">
+                      Company Name
+                    </th>
+                    <td class="px-4 py-3 break-all">
+                      {profile_value(@business_profile, :company_name)}
+                    </td>
                   </tr>
+                  <tr>
+                    <th class="bg-gray-50 px-4 py-3 text-left font-medium text-gray-700">
+                      Business Type
+                    </th>
+                    <td class="px-4 py-3 break-all">
+                      {profile_value(@business_profile, :business_type)}
+                    </td>
+                  </tr>
+                  <tr>
+                    <th class="bg-gray-50 px-4 py-3 text-left font-medium text-gray-700">
+                      Primary City / Base Location
+                    </th>
+                    <td class="px-4 py-3 break-all">
+                      {profile_value(@business_profile, :primary_city)}
+                    </td>
+                  </tr>
+
                   <tr>
                     <th class="bg-gray-50 px-4 py-3 text-left font-medium text-gray-700">
                       Account Status
@@ -134,5 +160,23 @@ defmodule GoodsWeb.ProfileLive do
       </div>
     </Layouts.app>
     """
+  end
+
+  defp get_business_profile(current_user) do
+    Goods.Accounts.BusinessProfile
+    |> Ash.Query.filter(user_id == ^current_user.id)
+    |> Ash.read_one!(actor: current_user)
+  end
+
+  defp profile_value(nil, _field), do: "Not Available"
+
+  defp profile_value(profile, field) do
+    value = Map.get(profile, field)
+
+    if is_binary(value) and String.trim(value) != "" do
+      value
+    else
+      "Not Available"
+    end
   end
 end

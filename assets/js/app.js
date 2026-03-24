@@ -20,17 +20,204 @@
 // Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
 import "phoenix_html"
 import "@tailwindplus/elements"
+import Chart from "chart.js/auto"
 // Establish Phoenix Socket and LiveView configuration.
 import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import {hooks as colocatedHooks} from "phoenix-colocated/goods"
 import topbar from "../vendor/topbar"
 
+const EnterpriseReportCharts = {
+  mounted() {
+    this.charts = []
+    this.bindToggle()
+    this.renderCharts()
+  },
+
+  updated() {
+    this.renderCharts()
+  },
+
+  destroyed() {
+    this.destroyCharts()
+  },
+
+  bindToggle() {
+    const buttons = this.el.querySelectorAll("[data-chart-target]")
+
+    buttons.forEach(button => {
+      button.addEventListener("click", () => {
+        const target = button.dataset.chartTarget
+
+        buttons.forEach(item => item.classList.toggle("is-active", item === button))
+
+        this.el.querySelectorAll("[data-chart-panel]").forEach(panel => {
+          panel.classList.toggle("is-active", panel.dataset.chartPanel === target)
+        })
+      })
+    })
+  },
+
+  parsePayload() {
+    try {
+      return JSON.parse(this.el.dataset.chartPayload || "{}")
+    } catch (_error) {
+      return {}
+    }
+  },
+
+  renderCharts() {
+    const payload = this.parsePayload()
+    this.destroyCharts()
+
+    this.renderLine(
+      "chart-shipments-trend",
+      payload.shipments_trend?.labels || [],
+      payload.shipments_trend?.values || [],
+      "Shipments"
+    )
+
+    this.renderPie(
+      "chart-revenue-type",
+      payload.revenue_by_type?.labels || [],
+      payload.revenue_by_type?.values || []
+    )
+
+    this.renderBar(
+      "chart-routes",
+      payload.shipments_by_route?.labels || [],
+      payload.shipments_by_route?.values || [],
+      "Route shipments"
+    )
+
+    this.renderDoughnut(
+      "chart-activity",
+      payload.activity_distribution?.labels || [],
+      payload.activity_distribution?.values || []
+    )
+  },
+
+  renderLine(canvasId, labels, values, label) {
+    const chart = this.createChart(canvasId, {
+      type: "line",
+      data: {
+        labels,
+        datasets: [{
+          label,
+          data: values,
+          borderColor: "#9bd2ff",
+          backgroundColor: "rgba(155, 210, 255, 0.22)",
+          fill: true,
+          tension: 0.35,
+          pointRadius: 3,
+          pointBackgroundColor: "#e4f4ff"
+        }]
+      },
+      options: this.baseOptions()
+    })
+
+    if (chart) this.charts.push(chart)
+  },
+
+  renderPie(canvasId, labels, values) {
+    const chart = this.createChart(canvasId, {
+      type: "pie",
+      data: {
+        labels,
+        datasets: [{
+          data: values,
+          backgroundColor: ["#7dd3fc", "#fda4af", "#fcd34d", "#34d399", "#a5b4fc", "#f9a8d4"],
+          borderColor: "rgba(15, 23, 42, 0.9)",
+          borderWidth: 2
+        }]
+      },
+      options: this.baseOptions({legendPosition: "bottom"})
+    })
+
+    if (chart) this.charts.push(chart)
+  },
+
+  renderBar(canvasId, labels, values, label) {
+    const chart = this.createChart(canvasId, {
+      type: "bar",
+      data: {
+        labels,
+        datasets: [{
+          label,
+          data: values,
+          borderRadius: 8,
+          backgroundColor: "rgba(56, 189, 248, 0.7)",
+          borderColor: "rgba(224, 242, 254, 0.9)",
+          borderWidth: 1
+        }]
+      },
+      options: this.baseOptions()
+    })
+
+    if (chart) this.charts.push(chart)
+  },
+
+  renderDoughnut(canvasId, labels, values) {
+    const chart = this.createChart(canvasId, {
+      type: "doughnut",
+      data: {
+        labels,
+        datasets: [{
+          data: values,
+          backgroundColor: ["#93c5fd", "#86efac", "#fde68a"],
+          borderColor: "rgba(15, 23, 42, 0.95)",
+          borderWidth: 2
+        }]
+      },
+      options: this.baseOptions({legendPosition: "bottom"})
+    })
+
+    if (chart) this.charts.push(chart)
+  },
+
+  createChart(canvasId, config) {
+    const canvas = document.getElementById(canvasId)
+    if (!canvas) return null
+    return new Chart(canvas, config)
+  },
+
+  destroyCharts() {
+    this.charts.forEach(chart => chart.destroy())
+    this.charts = []
+  },
+
+  baseOptions({legendPosition = "top"} = {}) {
+    return {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          labels: {
+            color: "#374151"
+          },
+          position: legendPosition
+        }
+      },
+      scales: {
+        x: {
+          grid: {color: "rgba(209, 213, 219, 0.8)"},
+          ticks: {color: "#4b5563"}
+        },
+        y: {
+          grid: {color: "rgba(209, 213, 219, 0.8)"},
+          ticks: {color: "#4b5563"},
+          beginAtZero: true
+        }
+      }
+    }
+  }
+}
+
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: {_csrf_token: csrfToken},
-  hooks: {...colocatedHooks},
+  hooks: {...colocatedHooks, EnterpriseReportCharts},
 })
 
 // Show progress bar on live navigation and form submits

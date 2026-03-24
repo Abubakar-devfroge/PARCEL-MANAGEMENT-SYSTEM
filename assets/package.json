@@ -1,6 +1,7 @@
 {
   "dependencies": {
     "@fontsource-variable/montserrat": "^5.2.8",
-    "@tailwindplus/elements": "^1.0.22"
+    "@tailwindplus/elements": "^1.0.22",
+    "chart.js": "^4.5.1"
   }
 }

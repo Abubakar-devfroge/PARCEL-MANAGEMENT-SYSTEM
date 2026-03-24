@@ -6,6 +6,7 @@ defmodule Goods.Accounts do
   end
 
   resources do
+    resource Goods.Accounts.BusinessProfile
     resource Goods.Accounts.Token
     resource Goods.Accounts.User
   end

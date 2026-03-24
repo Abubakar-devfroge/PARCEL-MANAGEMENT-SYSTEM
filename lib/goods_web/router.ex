@@ -52,6 +52,12 @@ defmodule GoodsWeb.Router do
       live("/parcel_reports", ParcelReportLive, :index)
       live("/profile", ProfileLive, :index)
     end
+
+    ash_authentication_live_session :onboarding_routes,
+      on_mount: [{GoodsWeb.LiveUserAuth, :live_user_required}],
+      root_layout: {GoodsWeb.Layouts, :root_onboarding} do
+      live("/onboarding", OnboardingLive, :index)
+    end
   end
 
   scope "/", GoodsWeb do

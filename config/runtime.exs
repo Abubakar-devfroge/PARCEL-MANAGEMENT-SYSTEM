@@ -26,8 +26,8 @@ dev_africastalking_defaults =
   if config_env() == :dev do
     %{
       username: "sandbox",
-      api_key: "atsk_ae5de477a578cc197c99bf630eb7009f6993871f5765cae1a5410035052266f773313ab3",
-      base_url: "http://api.sandbox.africastalking.com/version1/messaging"
+      api_key: "atsk_28f0e0dcf80822736c002d5ec60a33a0715cb9d1f76285b37e8036c297163472a96fc92f",
+      base_url: "https://api.sandbox.africastalking.com/version1/messaging"
     }
   else
     %{}

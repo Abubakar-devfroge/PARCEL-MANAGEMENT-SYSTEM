@@ -4,14 +4,30 @@ defmodule Logistics.Notifications.ParcelBookingSMS do
   @default_base_url "https://api.africastalking.com/version1/messaging"
 
   def send_booking_confirmation(parcel_booking) do
-    message = "Parcel booked successfully. Parcel number: #{parcel_booking.parcel_number}."
+    sender_message =
+      "Parcel booked successfully. Here is your parcel number: #{parcel_booking.parcel_number}."
 
-    send_sms(parcel_booking.sender_phone, message)
+    recipient_message =
+      "#{sender_display_name(parcel_booking.sender_name)} has sent parcels to you. Here is parcel number: #{parcel_booking.parcel_number}."
+
+    with :ok <- send_sms(parcel_booking.sender_phone, sender_message),
+         :ok <- send_sms(parcel_booking.receiver_phone, recipient_message) do
+      :ok
+    end
   end
+
+  def format_phone_number(phone_number), do: normalize_phone(phone_number)
+
+  defp sender_display_name(name) when is_binary(name) do
+    normalized = String.trim(name)
+    if normalized == "", do: "The sender", else: normalized
+  end
+
+  defp sender_display_name(_), do: "The sender"
 
   defp send_sms(phone_number, message) do
     with {:ok, config} <- sms_config(),
-         {:ok, to} <- normalize_phone(phone_number),
+         {:ok, to} <- format_phone_number(phone_number),
          {:ok, response} <- send_request(config, to, message),
          :ok <- handle_response(response) do
       :ok
@@ -58,7 +74,10 @@ defmodule Logistics.Notifications.ParcelBookingSMS do
         {:ok, response}
 
       {:error, reason} ->
-        Logger.warning("Failed to call Africa's Talking SMS API: #{inspect(reason)}")
+        Logger.warning(
+          "Failed to call Africa's Talking SMS API for recipient #{to}: #{inspect(reason)}"
+        )
+
         {:error, reason}
     end
   end
@@ -70,15 +89,27 @@ defmodule Logistics.Notifications.ParcelBookingSMS do
         :ok
 
       reason ->
-        Logger.warning("Africa's Talking SMS delivery failed: #{inspect(reason)}")
+        Logger.warning(
+          "Africa's Talking SMS delivery failed: #{inspect(reason)} | provider_details=#{inspect(provider_error_details(body))}"
+        )
+
         {:error, {:delivery_error, reason}}
     end
   end
 
   defp handle_response(%Req.Response{status: status, body: body}) do
-    Logger.warning("Africa's Talking SMS request failed with status #{status}: #{inspect(body)}")
+    details = provider_error_details(body)
+    provider_message = Map.get(details, :provider_message)
 
-    {:error, {:http_error, status}}
+    if is_binary(provider_message) and provider_message != "" do
+      Logger.warning("Africa's Talking provider message: #{provider_message}")
+    end
+
+    Logger.warning(
+      "Africa's Talking SMS request failed with status #{status}: #{inspect(details)}"
+    )
+
+    {:error, {:http_error, status, details}}
   end
 
   defp normalize_phone(phone_number) when is_binary(phone_number) do
@@ -140,6 +171,31 @@ defmodule Logistics.Notifications.ParcelBookingSMS do
   end
 
   defp recipient_successful?(_), do: false
+
+  defp provider_error_details(%{"SMSMessageData" => %{} = sms_data}) do
+    message = Map.get(sms_data, "Message")
+    recipients = Map.get(sms_data, "Recipients", [])
+
+    failed_recipients =
+      recipients
+      |> Enum.reject(&recipient_successful?/1)
+      |> Enum.map(fn recipient ->
+        %{
+          number: Map.get(recipient, "number") || Map.get(recipient, "phoneNumber"),
+          status: Map.get(recipient, "status"),
+          status_code: Map.get(recipient, "statusCode"),
+          cost: Map.get(recipient, "cost")
+        }
+      end)
+
+    %{provider_message: message, failed_recipients: failed_recipients}
+  end
+
+  defp provider_error_details(body) when is_binary(body) do
+    %{provider_message: String.trim(body)}
+  end
+
+  defp provider_error_details(body), do: %{raw_response: body}
 
   defp blank?(value) when value in [nil, ""], do: true
   defp blank?(value) when is_binary(value), do: String.trim(value) == ""
