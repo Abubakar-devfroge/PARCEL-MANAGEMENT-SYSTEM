@@ -1,6 +1,8 @@
 defmodule Goods.Release do
-  @moduledoc "Helpers for running DB tasks in releases."
-
+  @moduledoc """
+  Used for executing DB release tasks when run in production without Mix
+  installed.
+  """
   @app :goods
 
   def migrate do
@@ -21,6 +23,8 @@ defmodule Goods.Release do
   end
 
   defp load_app do
-    Application.load(@app)
+    # Many platforms require SSL when connecting to the database
+    Application.ensure_all_started(:ssl)
+    Application.ensure_loaded(@app)
   end
 end
