@@ -1,0 +1,17 @@
+# app.yaml
+name: parcel-management-system
+services:
+  - name: goods-web
+    github:
+      repo: Abubakar-devfroge/PARCEL-MANAGEMENT-SYSTEM
+      branch: main
+      deploy_on_push: true
+    source_dir: goods  # <--- Add the name of the folder containing mix.exs
+    build_command: mix assets.deploy
+    run_command: mix phx.server
+    http_port: 8080
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    envs:
+      - key: PHX_SERVER
+        value: "true"
