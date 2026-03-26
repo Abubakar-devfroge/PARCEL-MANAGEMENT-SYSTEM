@@ -2,6 +2,12 @@ defmodule Logistics.Notifications.ParcelBookingSMS do
   require Logger
 
   @default_base_url "https://api.africastalking.com/version1/messaging"
+  @sms_env_keys [
+    "AFRICASTALKING_USERNAME",
+    "AFRICASTALKING_API_KEY",
+    "AFRICASTALKING_FROM",
+    "AFRICASTALKING_BASE_URL"
+  ]
 
   def send_booking_confirmation(parcel_booking) do
     sender_message =
@@ -10,9 +16,26 @@ defmodule Logistics.Notifications.ParcelBookingSMS do
     recipient_message =
       "#{sender_display_name(parcel_booking.sender_name)} has sent parcels to you. Here is parcel number: #{parcel_booking.parcel_number}."
 
-    with :ok <- send_sms(parcel_booking.sender_phone, sender_message),
-         :ok <- send_sms(parcel_booking.receiver_phone, recipient_message) do
-      :ok
+    case send_sms(parcel_booking.sender_phone, sender_message) do
+      :ok ->
+        case send_sms(parcel_booking.receiver_phone, recipient_message) do
+          :ok ->
+            :ok
+
+          {:error, reason} ->
+            Logger.warning(
+              "Parcel booking SMS failed for receiver #{parcel_booking.receiver_phone} on booking #{parcel_booking.id} (#{parcel_booking.parcel_number}): #{inspect(reason)}"
+            )
+
+            {:error, {:receiver_sms_failed, reason}}
+        end
+
+      {:error, reason} ->
+        Logger.warning(
+          "Parcel booking SMS failed for sender #{parcel_booking.sender_phone} on booking #{parcel_booking.id} (#{parcel_booking.parcel_number}): #{inspect(reason)}"
+        )
+
+        {:error, {:sender_sms_failed, reason}}
     end
   end
 
@@ -35,21 +58,103 @@ defmodule Logistics.Notifications.ParcelBookingSMS do
   end
 
   defp sms_config do
+    ensure_local_sms_env_loaded()
+
     config = Application.get_env(:goods, __MODULE__, [])
-    username = config |> Keyword.get(:username) |> normalize_config_value()
-    api_key = config |> Keyword.get(:api_key) |> normalize_config_value()
-    from = config |> Keyword.get(:from) |> normalize_config_value()
+
+    username =
+      config
+      |> Keyword.get(:username)
+      |> normalize_config_value()
+      |> fallback_env("AFRICASTALKING_USERNAME")
+
+    api_key =
+      config
+      |> Keyword.get(:api_key)
+      |> normalize_config_value()
+      |> fallback_env("AFRICASTALKING_API_KEY")
+
+    from =
+      config
+      |> Keyword.get(:from)
+      |> normalize_config_value()
+      |> fallback_env("AFRICASTALKING_FROM")
 
     base_url =
       config
       |> Keyword.get(:base_url, @default_base_url)
       |> normalize_config_value()
+      |> fallback_env("AFRICASTALKING_BASE_URL")
+      |> fallback_value(@default_base_url)
 
     if blank?(username) or blank?(api_key) do
+      Logger.warning(
+        "Africa's Talking SMS credentials missing. username_present=#{not blank?(username)} api_key_present=#{not blank?(api_key)}"
+      )
+
       {:error, :missing_credentials}
     else
       {:ok, %{username: username, api_key: api_key, from: from, base_url: base_url}}
     end
+  end
+
+  defp ensure_local_sms_env_loaded do
+    [".env", ".env.example"]
+    |> Enum.find(&File.exists?/1)
+    |> case do
+      nil ->
+        :ok
+
+      env_file ->
+        env_file
+        |> File.read!()
+        |> String.split("\n")
+        |> Enum.each(fn line ->
+          normalized_line = String.trim(line)
+
+          cond do
+            normalized_line == "" ->
+              :ok
+
+            String.starts_with?(normalized_line, "#") ->
+              :ok
+
+            true ->
+              case String.split(normalized_line, "=", parts: 2) do
+                [key, value] ->
+                  env_key = String.trim(key)
+
+                  if env_key in @sms_env_keys and System.get_env(env_key) in [nil, ""] do
+                    env_value =
+                      value
+                      |> String.trim()
+                      |> String.trim_leading("\"")
+                      |> String.trim_trailing("\"")
+                      |> String.trim_leading("'")
+                      |> String.trim_trailing("'")
+
+                    System.put_env(env_key, env_value)
+                  end
+
+                _ ->
+                  :ok
+              end
+          end
+        end)
+    end
+  end
+
+  defp fallback_env(value, env_key) do
+    if blank?(value) do
+      System.get_env(env_key)
+      |> normalize_config_value()
+    else
+      value
+    end
+  end
+
+  defp fallback_value(value, default) do
+    if blank?(value), do: default, else: value
   end
 
   defp send_request(config, to, message) do

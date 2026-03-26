@@ -222,8 +222,19 @@ const liveSocket = new LiveSocket("/live", Socket, {
 
 // Show progress bar on live navigation and form submits
 topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
-window.addEventListener("phx:page-loading-start", _info => topbar.show(300))
-window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
+let topbarStartedAt = 0
+const minTopbarVisibleMs = 150
+
+window.addEventListener("phx:page-loading-start", _info => {
+  topbarStartedAt = Date.now()
+  topbar.show()
+})
+
+window.addEventListener("phx:page-loading-stop", _info => {
+  const elapsed = Date.now() - topbarStartedAt
+  const remaining = Math.max(0, minTopbarVisibleMs - elapsed)
+  window.setTimeout(() => topbar.hide(), remaining)
+})
 
 // connect if there are any LiveViews on the page
 liveSocket.connect()

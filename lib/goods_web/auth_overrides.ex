@@ -27,7 +27,8 @@ defmodule GoodsWeb.AuthOverrides do
   # end
 
   override SignInLive do
-    set :root_class, "bg-white flex items-center justify-center px-4 sm:px-6 md:px-8 min-h-[90dvh]"
+    set :root_class,
+        "bg-white flex items-center justify-center px-4 sm:px-6 md:px-8 min-h-[90dvh]"
   end
 
   override ResetLive do
@@ -74,11 +75,11 @@ defmodule GoodsWeb.AuthOverrides do
         "w-full rounded-md border border-black bg-white px-6 py-2 text-base text-gray-900 focus:border-black focus:ring-4 focus:ring-black/10 transition"
 
     set :submit_class,
-        "font-semibold text-base bg-black text-white rounded-md w-full px-6 py-2 hover:bg-black/80 hover:text-white transition-colors duration-300"
+        "font-semibold text-base bg-black text-white rounded-md w-full px-6 py-2 hover:bg-amber-700 hover:text-white transition-colors duration-300"
   end
 
   override Components.MagicLink.Input do
     set :submit_class,
-        "font-semibold text-base bg-black text-white rounded-md w-full px-6 py-2 hover:bg-black/80 hover:text-white transition-colors duration-300"
+        "font-semibold text-base bg-black text-white rounded-md w-full px-6 py-2 hover:bg-amber-700 hover:text-white transition-colors duration-300"
   end
 end

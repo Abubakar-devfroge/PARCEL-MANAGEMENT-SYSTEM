@@ -31,7 +31,7 @@ defmodule GoodsWeb.OnboardingLive do
 
   @impl true
   def handle_event("save", %{"business_profile" => params}, socket) do
-    case AshPhoenix.Form.submit(socket.assigns.form, params: params) do
+    case AshPhoenix.Form.submit(socket.assigns.form, params: normalize_routing_params(params)) do
       {:ok, profile} ->
         {:noreply,
          socket
@@ -86,5 +86,16 @@ defmodule GoodsWeb.OnboardingLive do
     Goods.Accounts.BusinessProfile
     |> Ash.Query.filter(user_id == ^current_user.id)
     |> Ash.read_one!(actor: current_user)
+  end
+
+  defp normalize_routing_params(params) do
+    primary_city = Map.get(params, "primary_city", "") |> String.trim()
+    base_office = Map.get(params, "base_office", "") |> String.trim()
+
+    if base_office == "" and primary_city != "" do
+      Map.put(params, "base_office", primary_city)
+    else
+      params
+    end
   end
 end

@@ -1,6 +1,9 @@
 <Layouts.app flash={@flash}>
   <section class="min-h-screen bg-white px-4 py-8 sm:px-6 lg:px-8">
-    <div :if={@show_cancel_warning} class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div
+      :if={@show_cancel_warning}
+      class="fixed inset-0 z-50 flex items-center justify-center p-4"
+    >
       <button
         type="button"
         phx-click="continue_onboarding"
@@ -16,13 +19,12 @@
         </p>
 
         <div class="mt-5 flex flex-wrap justify-end gap-3">
-          <button
+          <.button
             type="button"
             phx-click="continue_onboarding"
-            class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-50"
           >
             Continue Onboarding
-          </button>
+          </.button>
           <button
             type="button"
             phx-click="confirm_cancel_onboarding"
@@ -93,9 +95,43 @@
             />
             <.input
               field={@form[:brand_logo]}
-              type="text"
+              type="url"
               label="Brand / Logo URL (Optional)"
               placeholder="https://example.com/logo.png"
+            />
+            <.input
+              field={@form[:base_office]}
+              type="text"
+              label="Base Office (Primary Hub)"
+              placeholder="Defaults to Primary City if empty"
+            />
+            <.input
+              field={@form[:branch_offices]}
+              type="textarea"
+              label="Branch Offices"
+              placeholder="One office per line"
+              rows="3"
+            />
+            <.input
+              field={@form[:delivery_destinations]}
+              type="textarea"
+              label="Delivery Destinations"
+              placeholder="One destination per line"
+              rows="3"
+            />
+            <.input
+              field={@form[:transfer_points]}
+              type="textarea"
+              label="Transfer Points"
+              placeholder="One transfer point per line"
+              rows="3"
+            />
+            <.input
+              field={@form[:valid_routes]}
+              type="textarea"
+              label="Valid Routes"
+              placeholder="Format: Origin -> Destination (one route per line)"
+              rows="4"
             />
           </div>
 

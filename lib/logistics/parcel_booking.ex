@@ -23,6 +23,9 @@ defmodule Logistics.ParcelBooking do
         :receiver_name,
         :receiver_id,
         :receiver_phone,
+        :origin_office_id,
+        :destination_office_id,
+        :route_id,
         :destination,
         :parcel_type,
         :quantity,
@@ -40,6 +43,9 @@ defmodule Logistics.ParcelBooking do
         :receiver_name,
         :receiver_id,
         :receiver_phone,
+        :origin_office_id,
+        :destination_office_id,
+        :route_id,
         :destination,
         :parcel_type,
         :quantity,
@@ -89,6 +95,12 @@ defmodule Logistics.ParcelBooking do
     attribute :receiver_phone, :string do
       allow_nil? false
     end
+
+    attribute :origin_office_id, :string
+
+    attribute :destination_office_id, :string
+
+    attribute :route_id, :string
 
     attribute :destination, :string do
       allow_nil? false

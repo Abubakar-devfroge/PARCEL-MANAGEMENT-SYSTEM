@@ -282,12 +282,10 @@ defmodule GoodsWeb.Navigation do
         <div class="hidden sm:flex">
           <ul class="menu menu-horizontal w-full relative z-10 flex items-center gap-4 px-4 py-2 sm:px-6 lg:px-8 justify-end">
             <li>
-            <.button variant="primary">
-              <.link
-                navigate={~p"/sign-in"}
-              >
-                Log In
-              </.link>
+              <.button variant="primary">
+                <.link navigate={~p"/sign-in"}>
+                  Log In
+                </.link>
               </.button>
             </li>
           </ul>
@@ -337,7 +335,7 @@ defmodule GoodsWeb.Navigation do
           <nav class="flex flex-col space-y-6 text-lg">
             <.link
               navigate={~p"/sign-in"}
-              class="bg-red-700 text-white rounded-md px-6 py-2 text-center hover:bg-gray-900 transition-colors duration-300"
+              class="bg-red-700 text-white rounded-2xl px-6 py-3 text-center hover:bg-gray-900 transition-colors duration-300"
             >
               Sign in
             </.link>

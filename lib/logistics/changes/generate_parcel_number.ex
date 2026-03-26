@@ -10,7 +10,10 @@ defmodule Logistics.Changes.GenerateParcelNumber do
         changeset
 
       _ ->
-        destination = Changeset.get_attribute(changeset, :destination) || "UNKNOWN"
+        destination =
+          Changeset.get_attribute(changeset, :destination_office_id) ||
+            Changeset.get_attribute(changeset, :destination) || "UNKNOWN"
+
         dest_code = sanitize_destination(destination)
         random_code = random_parcel_suffix()
 

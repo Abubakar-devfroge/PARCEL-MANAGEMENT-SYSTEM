@@ -22,7 +22,12 @@ defmodule Goods.Accounts.BusinessProfile do
         :country,
         :primary_city,
         :business_phone,
-        :brand_logo
+        :brand_logo,
+        :base_office,
+        :branch_offices,
+        :delivery_destinations,
+        :transfer_points,
+        :valid_routes
       ]
 
       change set_attribute(:user_id, actor(:id))
@@ -37,7 +42,12 @@ defmodule Goods.Accounts.BusinessProfile do
         :country,
         :primary_city,
         :business_phone,
-        :brand_logo
+        :brand_logo,
+        :base_office,
+        :branch_offices,
+        :delivery_destinations,
+        :transfer_points,
+        :valid_routes
       ]
     end
   end
@@ -75,7 +85,19 @@ defmodule Goods.Accounts.BusinessProfile do
       allow_nil? false
     end
 
-    attribute :brand_logo, :string
+    attribute :brand_logo, :string do
+      constraints match: ~r/^(https?:\/\/|\/).+\.(?:png|jpe?g|gif|webp|svg)(?:\?.*)?$/i
+    end
+
+    attribute :base_office, :string
+
+    attribute :branch_offices, :string
+
+    attribute :delivery_destinations, :string
+
+    attribute :transfer_points, :string
+
+    attribute :valid_routes, :string
 
     create_timestamp :inserted_at
     update_timestamp :updated_at
