@@ -4,7 +4,7 @@
 ARG ELIXIR_VERSION=1.19.1
 ARG OTP_VERSION=28.1.1
 ARG DEBIAN_VERSION=trixie-20260316-slim
-ARG MIX_ENV=prod   # <‑‑ expose the build environment
+ARG MIX_ENV=prod  
 
 ARG BUILDER_IMAGE="docker.io/hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}"
 ARG RUNNER_IMAGE="docker.io/debian:${DEBIAN_VERSION}"
@@ -27,7 +27,7 @@ COPY mix.exs mix.lock ./
 RUN mix deps.get --only ${MIX_ENV} && mkdir -p config
 
 # Compile deps (triggered by config change)
-COPY config/config.exs config/prod.exs config/
+COPY config config
 RUN mix deps.compile
 
 # Setup assets
