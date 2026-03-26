@@ -1,18 +1,18 @@
 # ────────────────────────────────────────────────────────────────────────────────
-# 1️⃣  Builder image – contains Elixir, Erlang, Node.js and npm
+# 1️⃣  Builder image
 # ────────────────────────────────────────────────────────────────────────────────
-ARG ELIXIR_VERSION=1.19.1
-ARG OTP_VERSION=28.1.1
-ARG DEBIAN_VERSION=trixie-20260316-slim
-ARG MIX_ENV=prod  
+ARG ELIXIR_VERSION=1.16.2
+ARG OTP_VERSION=26.2.3
+ARG DEBIAN_VERSION=bookworm-20240130-slim
+ARG MIX_ENV=prod
 
-ARG BUILDER_IMAGE="docker.io/hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION}"
-ARG RUNNER_IMAGE="docker.io/debian:${DEBIAN_VERSION}"
+FROM hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION} AS builder
 
-FROM ${BUILDER_IMAGE} AS builder
+# We must redeclare ARGs inside the stage to use them
+ARG MIX_ENV
 ENV MIX_ENV=${MIX_ENV}
 
-# Install build‑time tools
+# Install build‑time tools (build-essential is required for picosat/bcrypt)
 RUN apt-get update \
     && apt-get install -y --no-install-recommends build-essential git nodejs npm \
     && rm -rf /var/lib/apt/lists/*
@@ -24,36 +24,40 @@ RUN mix local.hex --force && mix local.rebar --force
 
 # Fetch Elixir deps
 COPY mix.exs mix.lock ./
-RUN mix deps.get --only ${MIX_ENV} && mkdir -p config
+# FIX: Added timeout and concurrency for picosat_elixir
+RUN HEX_HTTP_CONCURRENCY=1 HEX_HTTP_TIMEOUT=120 mix deps.get --only ${MIX_ENV}
 
-# Compile deps (triggered by config change)
+# Copy config BEFORE deps.compile so it knows the prod settings
 COPY config config
 RUN mix deps.compile
 
-# Setup assets
-RUN mix assets.setup
-
-# Install npm front‑end packages
+# Setup assets & Install npm packages
 COPY assets/package.json assets/package-lock.json ./assets/
 RUN npm --prefix assets ci --no-audit --progress=false
 
-# Rest of the source
+# Copy rest of source
 COPY priv priv
 COPY lib lib
 COPY assets assets
 
 # Compile the release
+# 1. Compile code
 RUN mix compile
+# 2. Deploy assets (Tailwind/Esbuild)
 RUN mix assets.deploy
-COPY config/runtime.exs config/
+# 3. Handle runtime config and release
 COPY rel rel
 RUN mix release
 
 # ────────────────────────────────────────────────────────────────────────────────
-# 2️⃣  Runtime image – only what the server needs
+# 2️⃣  Runtime image
 # ────────────────────────────────────────────────────────────────────────────────
-FROM ${RUNNER_IMAGE} AS final
+FROM debian:${DEBIAN_VERSION} AS final
+
+# Redecalre ARG for the final stage
+ARG MIX_ENV
 ENV MIX_ENV=${MIX_ENV}   
+ENV PHX_SERVER=true
 
 # Install runtime libraries
 RUN apt-get update \
@@ -68,9 +72,12 @@ ENV LC_ALL=en_US.UTF-8
 
 WORKDIR /app
 RUN chown nobody /app
-USER nobody
 
-# Copy the compiled release – now expands MIX_ENV correctly
+# Copy the compiled release
+# Note: Ensure 'goods' matches your app name in mix.exs
 COPY --from=builder --chown=nobody:root /app/_build/${MIX_ENV}/rel/goods ./
 
-CMD ["/app/bin/server"]
+USER nobody
+
+# Start the app using the release script
+CMD ["/app/bin/goods", "start"]
