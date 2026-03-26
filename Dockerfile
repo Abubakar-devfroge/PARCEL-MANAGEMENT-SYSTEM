@@ -27,7 +27,7 @@ COPY mix.exs mix.lock ./
 RUN mix deps.get --only ${MIX_ENV} && mkdir -p config
 
 # Compile deps (triggered by config change)
-COPY config/config.exs config/${MIX_ENV}.exs config/
+COPY config/config.exs config/prod.exs config/
 RUN mix deps.compile
 
 # Setup assets
