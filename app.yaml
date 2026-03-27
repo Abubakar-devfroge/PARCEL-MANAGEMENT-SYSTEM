@@ -1,37 +1,60 @@
-# app.yaml
-name: parcel-management-system
-
-# 1️⃣  DB component – gives us the bindable DATABASE_URL
+alerts:
+- rule: DEPLOYMENT_FAILED
+- rule: DOMAIN_FAILED
+databases:
+- cluster_name: parcels-db
+  db_name: defaultdb
+  db_user: doadmin
+  engine: PG
+  name: parcels-db
+  production: true
+  version: "18"
+features:
+- buildpack-stack=ubuntu-22
+ingress:
+  rules:
+  - component:
+      name: parcel-management-system
+    match:
+      authority:
+        exact: ""
+      path:
+        prefix: /
+name: parcel
+region: fra
 services:
-  - name: parcels-db          # ← Name must match the bindable you reference below
-    type: db                  # ← Managed PostgreSQL (or Valkey, etc.)
-    engine: postgresql        # ← can also be valkey, mysql, etc.
-
-  # 2️⃣  Web service component
-  - name: goods-web
-    github:
-      repo: Abubakar-devfroge/PARCEL-MANAGEMENT-SYSTEM
-      branch: main
-      deploy_on_push: true
-    source_dir: goods          # folder that contains mix.exs
-    build_command: mix assets.deploy
-    run_command: mix phx.server
-    http_port: 8080
-    instance_count: 1
-    instance_size_slug: basic-xxs
-    envs:
-      - key: PHX_SERVER
-        value: "true"
-
-      - key: PHX_HOST
-        value: "parcel-loidc.ondigitalocean.app"
-
-      - key: PHX_URL_SCHEME
-        value: "https"
-
-      - key: PHX_URL_PORT
-        value: "443"
-
-      # Bind the DB connection string into the process
-      - key: DATABASE_URL
-        value: ${parcels-db.DATABASE_URL}
+- dockerfile_path: /Dockerfile
+  envs:
+  - key: AFRICASTALKING_USERNAME
+    scope: RUN_AND_BUILD_TIME
+    value: sandbox
+  - key: AFRICASTALKING_API_KEY
+    scope: RUN_AND_BUILD_TIME
+    value: atsk_7d5b8adb45e651f8a8ffce7d38eb6e99abcfb4befc3989ba4c2b82da90e9ce90da1348f6
+  - key: AFRICASTALKING_BASE_URL
+    scope: RUN_AND_BUILD_TIME
+    value: https://api.sandbox.africastalking.com/version1/messaging
+  - key: SECRET_KEY_BASE
+    scope: RUN_AND_BUILD_TIME
+    value: GetOlsobAZGsOW78Jv2AtFkhW3aRJG+U8buljJyRv1uZj3YjRFgiDaR9rMh/ErBs
+  - key: DATABASE_URL
+    scope: RUN_TIME
+    value: ${parcels-db.DATABASE_URL}
+  - key: TOKEN_SIGNING_SECRET
+    scope: RUN_AND_BUILD_TIME
+    value: mR037P1+JAEserEd4iwI1fGhILvGcJ1r74ezRs0bCicKebs+wv95EQIf7NyEOajd
+  - key: PHX_HOST
+    scope: RUN_AND_BUILD_TIME
+    value: parcel-loidc.ondigitalocean.app.
+  - key: PHX_SERVER
+    scope: RUN_AND_BUILD_TIME
+    value: "true"
+  github:
+    branch: main
+    deploy_on_push: true
+    repo: Abubakar-devfroge/PARCEL-MANAGEMENT-SYSTEM
+  http_port: 4000
+  instance_count: 2
+  instance_size_slug: apps-s-1vcpu-1gb
+  name: parcel-management-system
+  source_dir: /
