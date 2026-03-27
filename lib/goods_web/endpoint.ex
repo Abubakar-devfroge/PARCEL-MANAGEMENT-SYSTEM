@@ -62,10 +62,6 @@ socket "/live", Phoenix.LiveView.Socket,
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
-    # --- DO PROXY TRUST ---
-  # This ensures the app knows it is behind a proxy (DigitalOcean)
-  # and helps with remote IP and protocol detection.
-  plug RemoteIp
   plug GoodsWeb.Router
 
 
