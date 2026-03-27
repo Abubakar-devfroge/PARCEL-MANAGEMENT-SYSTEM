@@ -95,11 +95,13 @@ config :goods, Goods.Repo,
       port: port
     ],
     # --- FIX FOR WEBSOCKET / CHECK ORIGIN ERROR ---
-    check_origin: [
-      "https://#{host}",
-      "//#{host}",
-      "https://parcel-loidc.ondigitalocean.app"
-    ],
+    # check_origin: [
+    #   "https://#{host}",
+    #   "//#{host}",
+    #   "https://parcel-loidc.ondigitalocean.app"
+    # ],
+
+    check_origin: false,
     # -----------------------------------------------
     secret_key_base: secret_key_base
 
