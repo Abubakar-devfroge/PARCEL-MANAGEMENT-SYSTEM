@@ -37,7 +37,6 @@ if System.get_env("PHX_SERVER") do
 end
 
 port = String.to_integer(System.get_env("PORT") || "4000")
-config :goods, GoodsWeb.Endpoint, http: [port: port]
 
 # 3. AFRICA'S TALKING CONFIGURATION
 at_username = System.get_env("AFRICASTALKING_USERNAME")
@@ -55,10 +54,8 @@ africastalking_base_url =
   case {System.get_env("AFRICASTALKING_BASE_URL"), at_username} do
     {url, _} when is_binary(url) and url != "" ->
       url
-
     {_, "sandbox"} ->
       "https://api.sandbox.africastalking.com/version1/messaging"
-
     _ ->
       "https://api.africastalking.com/version1/messaging"
   end
@@ -92,12 +89,22 @@ if config_env() == :prod do
       raise "environment variable SECRET_KEY_BASE is missing. Use `mix phx.gen.secret`"
 
   host = System.get_env("PHX_HOST") || "localhost"
-  url_scheme = System.get_env("PHX_URL_SCHEME") || "http"
-  url_port = String.to_integer(System.get_env("PHX_URL_PORT") || "#{port}")
+  url_scheme = System.get_env("PHX_URL_SCHEME") || "https" # Standard for DO
+  url_port = String.to_integer(System.get_env("PHX_URL_PORT") || "443")
 
   config :goods, GoodsWeb.Endpoint,
     url: [host: host, port: url_port, scheme: url_scheme],
-    http: [ip: {0, 0, 0, 0}, port: port],
+    http: [
+      ip: {0, 0, 0, 0},
+      port: port
+    ],
+    # --- FIX FOR WEBSOCKET / CHECK ORIGIN ERROR ---
+    check_origin: [
+      "https://#{host}",
+      "//#{host}",
+      "https://parcel-loidc.ondigitalocean.app"
+    ],
+    # -----------------------------------------------
     secret_key_base: secret_key_base
 
   config :goods,
@@ -107,4 +114,7 @@ if config_env() == :prod do
 else
   # Optional: Explicitly disable SSL for non-prod if your local DB doesn't use it
   config :goods, Goods.Repo, ssl: false
+
+  # Default endpoint config for dev/test
+  config :goods, GoodsWeb.Endpoint, http: [port: port]
 end
