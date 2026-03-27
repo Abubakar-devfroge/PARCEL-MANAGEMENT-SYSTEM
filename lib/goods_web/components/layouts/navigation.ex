@@ -15,11 +15,11 @@ defmodule GoodsWeb.Navigation do
           <aside id="desktop-sidebar" class="hidden lg:flex lg:w-50 lg:fixed lg:inset-y-0 lg:z-40">
             <div
               id="desktop-sidebar-inner"
-              class="flex grow flex-col overflow-y-auto  bg-black px-5 py-6 transition-all duration-300"
+              class="flex grow flex-col overflow-y-auto  bg-red-700 px-5 py-6 transition-all duration-300"
             >
               <.link navigate={~p"/dash"} class="mb-8 flex items-center gap-3 px-1">
                 <img
-                  src={~p"/images/favicon.webp"}
+                  src={~p"/images/logo1.svg"}
                   class="h-15 w-auto rounded-full"
                   alt="swiftly logo"
                   width="80"
@@ -208,7 +208,7 @@ defmodule GoodsWeb.Navigation do
             <div class="mb-8 flex items-center justify-between">
               <.link navigate={~p"/dash"} class="flex items-center gap-3">
                 <img
-                  src={~p"/images/favicon.webp"}
+                  src={~p"/images/logo1.svg"}
                   class="h-10 w-auto rounded-full"
                   alt="swiftly logo"
                   width="80"
@@ -292,7 +292,7 @@ defmodule GoodsWeb.Navigation do
         </div>
 
         <button
-          class="sm:hidden text-red-700 font-bold text-lg"
+          class="sm:hidden text-black font-bold text-lg"
           aria-label="Open menu"
           phx-click={
             JS.toggle(
@@ -315,7 +315,7 @@ defmodule GoodsWeb.Navigation do
         >
           <div class="flex justify-between items-center mb-10">
             <img
-              src={~p"/images/favicon.webp"}
+              src={~p"/images/logo1.svg"}
               class="h-10 w-auto"
               alt="swiftly logo"
               width="80"
@@ -335,7 +335,7 @@ defmodule GoodsWeb.Navigation do
           <nav class="flex flex-col space-y-6 text-lg">
             <.link
               navigate={~p"/sign-in"}
-              class="bg-black text-white rounded-2xl px-6 py-3 text-center hover:bg-gray-900 transition-colors duration-300"
+              class="bg-black text-white rounded-md px-6 py-3 text-center hover:bg-gray-900 transition-colors duration-300"
             >
               Sign in
             </.link>
