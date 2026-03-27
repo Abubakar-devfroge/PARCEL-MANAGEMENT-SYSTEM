@@ -11,9 +11,15 @@ defmodule GoodsWeb.Endpoint do
     same_site: "Lax"
   ]
 
-  socket "/live", Phoenix.LiveView.Socket,
-    websocket: [connect_info: [session: @session_options]],
-    longpoll: [connect_info: [session: @session_options]]
+socket "/live", Phoenix.LiveView.Socket,
+    websocket: [
+      connect_info: [session: @session_options],
+      # This forces the socket to use the check_origin list from your runtime.exs
+      check_origin: {GoodsWeb.Endpoint, :check_origin, []}
+    ],
+    longpoll: [
+      connect_info: [session: @session_options]
+    ]
 
   # Serve at "/" the static files from "priv/static" directory.
   #
@@ -56,5 +62,11 @@ defmodule GoodsWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
+    # --- DO PROXY TRUST ---
+  # This ensures the app knows it is behind a proxy (DigitalOcean)
+  # and helps with remote IP and protocol detection.
+  plug RemoteIp
   plug GoodsWeb.Router
+
+
 end
