@@ -203,7 +203,7 @@ defmodule GoodsWeb.Navigation do
 
           <div
             id="mobile-sidebar-panel"
-            class="relative flex h-full w-72 max-w-[85vw] -translate-x-full flex-col  bg-black px-5 py-6"
+            class="relative flex h-full w-72 max-w-[85vw] -translate-x-full flex-col  bg-red-700 px-5 py-6"
           >
             <div class="mb-8 flex items-center justify-between">
               <.link navigate={~p"/dash"} class="flex items-center gap-3">

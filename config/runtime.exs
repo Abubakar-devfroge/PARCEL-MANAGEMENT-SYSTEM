@@ -88,22 +88,26 @@ config :goods, Goods.Repo,
   url_scheme = System.get_env("PHX_URL_SCHEME") || "https" # Standard for DO
   url_port = String.to_integer(System.get_env("PHX_URL_PORT") || "443")
 
-  config :goods, GoodsWeb.Endpoint,
-    url: [host: host, port: url_port, scheme: url_scheme],
-    http: [
-      ip: {0, 0, 0, 0},
-      port: port
-    ],
-    # --- FIX FOR WEBSOCKET / CHECK ORIGIN ERROR ---
-    # check_origin: [
-    #   "https://#{host}",
-    #   "//#{host}",
-    #   "https://parcel-loidc.ondigitalocean.app"
-    # ],
+# runtime.exs  (prod section)
 
-    check_origin: false,
-    # -----------------------------------------------
-    secret_key_base: secret_key_base
+config :goods, Goods.Repo,
+  url: database_url,
+  ssl: true,
+  ssl_opts: [verify: :verify_none],
+  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
+  socket_options: maybe_ipv6
+
+config :goods, GoodsWeb.Endpoint,
+  url: [host: host, port: url_port, scheme: url_scheme],
+  http: [
+    ip: {0, 0, 0, 0},
+    port: port
+  ],
+  check_origin: [
+    "https://#{host}",
+    "https://parcel-loidc.ondigitalocean.app"
+  ],
+  secret_key_base: secret_key_base
 
   config :goods,
     token_signing_secret:
