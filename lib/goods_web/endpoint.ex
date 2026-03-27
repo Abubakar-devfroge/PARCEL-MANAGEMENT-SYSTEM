@@ -65,4 +65,13 @@ socket "/live", Phoenix.LiveView.Socket,
   plug GoodsWeb.Router
 
 
+
+  def check_origin(uri) do
+  # This matches the host we set in runtime.exs
+  host = uri.host
+
+  host == "parcel-loidc.ondigitalocean.app" or
+  host == "localhost" or
+  String.ends_with?(host, ".ondigitalocean.app")
+end
 end
