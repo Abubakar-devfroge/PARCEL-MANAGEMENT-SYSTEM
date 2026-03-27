@@ -68,48 +68,55 @@ config :goods, Logistics.Notifications.ParcelBookingSMS,
 config :goods, :super_admin_email, System.get_env("SUPER_ADMIN_EMAIL") || "Abubakar@craftinc.dev"
 
 # 4. PRODUCTION SPECIFIC CONFIG
-# 4. PRODUCTION SPECIFIC CONFIG
 if config_env() == :prod do
   database_url =
     System.get_env("DATABASE_URL") ||
       raise "environment variable DATABASE_URL is missing."
 
+  maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
+config :goods, Goods.Repo,
+    url: database_url,
+    # Updated syntax to remove the warning
+    ssl: [verify: :verify_none],
+    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
+    socket_options: maybe_ipv6
   secret_key_base =
     System.get_env("SECRET_KEY_BASE") ||
       raise "environment variable SECRET_KEY_BASE is missing. Use `mix phx.gen.secret`"
 
   host = System.get_env("PHX_HOST") || "localhost"
+  url_scheme = System.get_env("PHX_URL_SCHEME") || "https" # Standard for DO
   url_port = String.to_integer(System.get_env("PHX_URL_PORT") || "443")
-  maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
-  # DATABASE CONFIG
-  config :goods, Goods.Repo,
-    url: database_url,
-    ssl: [verify: :verify_none], # This is the correct, warning-free syntax
-    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
-    socket_options: maybe_ipv6
+# runtime.exs  (prod section)
 
-  # ENDPOINT CONFIG
-  config :goods, GoodsWeb.Endpoint,
-    url: [host: host, port: url_port, scheme: "https"],
-    http: [
-      ip: {0, 0, 0, 0},
-      port: port
-    ],
-    check_origin: [
-      "https://#{host}",
-      "//#{host}", # Added to help WebSocket handshakes
-      "https://parcel-loidc.ondigitalocean.app"
-    ],
-    secret_key_base: secret_key_base
+config :goods, Goods.Repo,
+  url: database_url,
+  ssl: true,
+  ssl_opts: [verify: :verify_none],
+  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
+  socket_options: maybe_ipv6
+
+config :goods, GoodsWeb.Endpoint,
+  url: [host: host, port: url_port, scheme: url_scheme],
+  http: [
+    ip: {0, 0, 0, 0},
+    port: port
+  ],
+  check_origin: [
+    "https://#{host}",
+    "https://parcel-loidc.ondigitalocean.app"
+  ],
+  secret_key_base: secret_key_base
 
   config :goods,
     token_signing_secret:
       System.get_env("TOKEN_SIGNING_SECRET") ||
         raise("Missing TOKEN_SIGNING_SECRET")
-
 else
-  # ... your existing dev/test config ...
+  # Optional: Explicitly disable SSL for non-prod if your local DB doesn't use it
   config :goods, Goods.Repo, ssl: false
+
+  # Default endpoint config for dev/test
   config :goods, GoodsWeb.Endpoint, http: [port: port]
 end
