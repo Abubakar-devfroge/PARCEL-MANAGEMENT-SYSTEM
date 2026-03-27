@@ -23,6 +23,15 @@ services:
       - key: PHX_SERVER
         value: "true"
 
+      - key: PHX_HOST
+        value: "parcel-loidc.ondigitalocean.app"
+
+      - key: PHX_URL_SCHEME
+        value: "https"
+
+      - key: PHX_URL_PORT
+        value: "443"
+
       # Bind the DB connection string into the process
       - key: DATABASE_URL
         value: ${parcels-db.DATABASE_URL}

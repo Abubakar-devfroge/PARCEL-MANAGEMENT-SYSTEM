@@ -15,7 +15,7 @@ defmodule GoodsWeb.Navigation do
           <aside id="desktop-sidebar" class="hidden lg:flex lg:w-50 lg:fixed lg:inset-y-0 lg:z-40">
             <div
               id="desktop-sidebar-inner"
-              class="flex grow flex-col overflow-y-auto  bg-red-700 px-5 py-6 transition-all duration-300"
+              class="flex grow flex-col overflow-y-auto  bg-black px-5 py-6 transition-all duration-300"
             >
               <.link navigate={~p"/dash"} class="mb-8 flex items-center gap-3 px-1">
                 <img
@@ -203,7 +203,7 @@ defmodule GoodsWeb.Navigation do
 
           <div
             id="mobile-sidebar-panel"
-            class="relative flex h-full w-72 max-w-[85vw] -translate-x-full flex-col  bg-red-700 px-5 py-6"
+            class="relative flex h-full w-72 max-w-[85vw] -translate-x-full flex-col  bg-black px-5 py-6"
           >
             <div class="mb-8 flex items-center justify-between">
               <.link navigate={~p"/dash"} class="flex items-center gap-3">
@@ -335,7 +335,7 @@ defmodule GoodsWeb.Navigation do
           <nav class="flex flex-col space-y-6 text-lg">
             <.link
               navigate={~p"/sign-in"}
-              class="bg-red-700 text-white rounded-2xl px-6 py-3 text-center hover:bg-gray-900 transition-colors duration-300"
+              class="bg-black text-white rounded-2xl px-6 py-3 text-center hover:bg-gray-900 transition-colors duration-300"
             >
               Sign in
             </.link>

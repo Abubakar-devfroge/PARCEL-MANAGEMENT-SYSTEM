@@ -55,8 +55,10 @@ africastalking_base_url =
   case {System.get_env("AFRICASTALKING_BASE_URL"), at_username} do
     {url, _} when is_binary(url) and url != "" ->
       url
+
     {_, "sandbox"} ->
       "https://api.sandbox.africastalking.com/version1/messaging"
+
     _ ->
       "https://api.africastalking.com/version1/messaging"
   end
