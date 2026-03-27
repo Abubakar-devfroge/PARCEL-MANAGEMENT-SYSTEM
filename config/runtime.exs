@@ -1,6 +1,6 @@
 import Config
 
-# 1. THE LOADER MUST RUN FIRST
+# 1. THE LOADER MUST RUN FIRST (Local Dev only)
 if config_env() != :prod do
   env_path = Path.expand("../.env", __DIR__)
 
@@ -17,10 +17,8 @@ if config_env() != :prod do
         [key, value] = String.split(line, "=", parts: 2)
 
         clean_key = String.trim(key)
-        # This regex removes surrounding quotes (double or single)
         clean_value = value |> String.trim() |> String.replace(~r/^["']|["']$/, "")
 
-        # FORCE override for local development to ensure it picks up .env changes
         System.put_env(clean_key, clean_value)
       end
     end)
@@ -29,7 +27,7 @@ if config_env() != :prod do
   end
 end
 
-# 2. DEBUG - Move these HERE (After the loader)
+# 2. DEBUG (After the loader)
 IO.inspect(System.get_env("AFRICASTALKING_USERNAME"), label: "AFTER LOAD - USERNAME")
 IO.inspect(System.get_env("AFRICASTALKING_API_KEY"), label: "AFTER LOAD - API KEY")
 
@@ -42,7 +40,6 @@ port = String.to_integer(System.get_env("PORT") || "4000")
 config :goods, GoodsWeb.Endpoint, http: [port: port]
 
 # 3. AFRICA'S TALKING CONFIGURATION
-# Fetch values and check if they exist to prevent :missing_credentials
 at_username = System.get_env("AFRICASTALKING_USERNAME")
 at_api_key = System.get_env("AFRICASTALKING_API_KEY")
 
@@ -58,10 +55,8 @@ africastalking_base_url =
   case {System.get_env("AFRICASTALKING_BASE_URL"), at_username} do
     {url, _} when is_binary(url) and url != "" ->
       url
-
     {_, "sandbox"} ->
       "https://api.sandbox.africastalking.com/version1/messaging"
-
     _ ->
       "https://api.africastalking.com/version1/messaging"
   end
@@ -83,6 +78,10 @@ if config_env() == :prod do
 
   config :goods, Goods.Repo,
     url: database_url,
+    # --- DIGITALOCEAN SSL REQUIREMENTS ---
+    ssl: true,
+    ssl_opts: [verify: :verify_none],
+    # --------------------------------------
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
     socket_options: maybe_ipv6
 
@@ -103,4 +102,7 @@ if config_env() == :prod do
     token_signing_secret:
       System.get_env("TOKEN_SIGNING_SECRET") ||
         raise("Missing TOKEN_SIGNING_SECRET")
+else
+  # Optional: Explicitly disable SSL for non-prod if your local DB doesn't use it
+  config :goods, Goods.Repo, ssl: false
 end

@@ -1,12 +1,19 @@
 # app.yaml
 name: parcel-management-system
+
+# 1️⃣  DB component – gives us the bindable DATABASE_URL
 services:
+  - name: parcels-db          # ← Name must match the bindable you reference below
+    type: db                  # ← Managed PostgreSQL (or Valkey, etc.)
+    engine: postgresql        # ← can also be valkey, mysql, etc.
+
+  # 2️⃣  Web service component
   - name: goods-web
     github:
       repo: Abubakar-devfroge/PARCEL-MANAGEMENT-SYSTEM
       branch: main
       deploy_on_push: true
-    source_dir: goods  # <--- Add the name of the folder containing mix.exs
+    source_dir: goods          # folder that contains mix.exs
     build_command: mix assets.deploy
     run_command: mix phx.server
     http_port: 8080
@@ -15,3 +22,7 @@ services:
     envs:
       - key: PHX_SERVER
         value: "true"
+
+      # Bind the DB connection string into the process
+      - key: DATABASE_URL
+        value: ${parcels-db.DATABASE_URL}
