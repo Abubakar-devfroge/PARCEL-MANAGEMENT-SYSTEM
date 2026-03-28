@@ -51,31 +51,75 @@ defmodule GoodsWeb.CoreComponents do
     assigns = assign_new(assigns, :id, fn -> "flash-#{assigns.kind}" end)
 
     ~H"""
-    <div
-      :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
-      id={@id}
-      phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
-      role="alert"
-      class="toast toast-top toast-end z-50"
-      {@rest}
-    >
-      <div class={[
-        "alert w-80 sm:w-96 max-w-80 sm:max-w-96 text-wrap",
-        @kind == :info && "alert-info",
-        @kind == :error && "alert-error"
-      ]}>
-        <.icon :if={@kind == :info} name="hero-information-circle" class="size-5 shrink-0" />
-        <.icon :if={@kind == :error} name="hero-exclamation-circle" class="size-5 shrink-0" />
-        <div>
-          <p :if={@title} class="font-semibold">{@title}</p>
-          <p>{msg}</p>
-        </div>
-        <div class="flex-1" />
-        <button type="button" class="group self-start cursor-pointer" aria-label={gettext("close")}>
-          <.icon name="hero-x-mark" class="size-5 opacity-40 group-hover:opacity-70" />
-        </button>
+   <div
+  :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
+  id={@id}
+  phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
+  role="alert"
+  class="toast toast-top toast-end z-50"
+  {@rest}
+>
+  <div class={[
+    "w-80 sm:w-96 max-w-80 sm:max-w-96 text-wrap rounded-md border p-4 shadow-sm",
+    @kind == :info && "border-green-500 bg-green-50",
+    @kind == :error && "border-red-500 bg-red-50"
+  ]}>
+    <div class="flex items-start gap-4">
+      <svg
+        :if={@kind == :info}
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="-mt-0.5 size-6 text-green-700"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+
+      <svg
+        :if={@kind == :error}
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="-mt-0.5 size-6 text-red-700"
+      >
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+      </svg>
+
+      <div class="flex-1">
+        <strong
+          :if={@title}
+          class={[
+            "block leading-tight font-medium",
+            @kind == :info && "text-green-800",
+            @kind == :error && "text-red-800"
+          ]}
+        >
+          {@title}
+        </strong>
+
+        <p class={[
+          "mt-0.5 text-sm",
+          @kind == :info && "text-green-700",
+          @kind == :error && "text-red-700"
+        ]}>
+          {msg}
+        </p>
       </div>
+
+      <button
+        type="button"
+        class="self-start cursor-pointer opacity-40 hover:opacity-70"
+        aria-label={gettext("close")}
+      >
+        <.icon name="hero-x-mark" class="size-5" />
+      </button>
     </div>
+  </div>
+</div>
     """
   end
 
