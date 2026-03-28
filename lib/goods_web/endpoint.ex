@@ -11,7 +11,7 @@ defmodule GoodsWeb.Endpoint do
     same_site: "Lax"
   ]
 
-socket "/live", Phoenix.LiveView.Socket,
+  socket "/live", Phoenix.LiveView.Socket,
     websocket: [
       connect_info: [session: @session_options],
       # This forces the socket to use the check_origin list from your runtime.exs
@@ -64,14 +64,12 @@ socket "/live", Phoenix.LiveView.Socket,
   plug Plug.Session, @session_options
   plug GoodsWeb.Router
 
-
-
   def check_origin(uri) do
-  # This matches the host we set in runtime.exs
-  host = uri.host
+    # This matches the host we set in runtime.exs
+    host = uri.host
 
-  host == "parcel-loidc.ondigitalocean.app" or
-  host == "localhost" or
-  String.ends_with?(host, ".ondigitalocean.app")
-end
+    host == "parcel-loidc.ondigitalocean.app" or
+      host == "localhost" or
+      String.ends_with?(host, ".ondigitalocean.app")
+  end
 end

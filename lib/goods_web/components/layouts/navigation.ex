@@ -265,10 +265,15 @@ defmodule GoodsWeb.Navigation do
     <% else %>
       <header class="navbar px-4 sm:px-6 lg:px-8 bg-white  flex items-center shadow-md h-16">
         <div class="flex-1">
-          <.link navigate={~p"/"} class="flex items-center gap-2">
+          <a
+            href={~p"/"}
+            class="inline-flex items-center gap-2 p-2 rounded-none
+          focus:outline focus:outline-3 focus:outline-dotted
+          focus:outline-blue-500 focus:outline-offset-2"
+          >
             <img
               src={~p"/images/logo1.svg"}
-              class="h-10 w-auto m-4"
+              class="h-10 w-auto "
               alt="swiftly logo"
               width="80"
               height="80"
@@ -276,7 +281,7 @@ defmodule GoodsWeb.Navigation do
               oncontextmenu="return false;"
             />
             <span class="sr-only">Home</span>
-          </.link>
+          </a>
         </div>
 
         <div class="hidden sm:flex">

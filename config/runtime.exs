@@ -54,8 +54,10 @@ africastalking_base_url =
   case {System.get_env("AFRICASTALKING_BASE_URL"), at_username} do
     {url, _} when is_binary(url) and url != "" ->
       url
+
     {_, "sandbox"} ->
       "https://api.sandbox.africastalking.com/version1/messaging"
+
     _ ->
       "https://api.africastalking.com/version1/messaging"
   end
@@ -74,40 +76,43 @@ if config_env() == :prod do
       raise "environment variable DATABASE_URL is missing."
 
   maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
-config :goods, Goods.Repo,
+
+  config :goods, Goods.Repo,
     url: database_url,
     # Updated syntax to remove the warning
     ssl: [verify: :verify_none],
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
     socket_options: maybe_ipv6
+
   secret_key_base =
     System.get_env("SECRET_KEY_BASE") ||
       raise "environment variable SECRET_KEY_BASE is missing. Use `mix phx.gen.secret`"
 
   host = System.get_env("PHX_HOST") || "localhost"
-  url_scheme = System.get_env("PHX_URL_SCHEME") || "https" # Standard for DO
+  # Standard for DO
+  url_scheme = System.get_env("PHX_URL_SCHEME") || "https"
   url_port = String.to_integer(System.get_env("PHX_URL_PORT") || "443")
 
-# runtime.exs  (prod section)
+  # runtime.exs  (prod section)
 
-config :goods, Goods.Repo,
-  url: database_url,
-  ssl: true,
-  ssl_opts: [verify: :verify_none],
-  pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
-  socket_options: maybe_ipv6
+  config :goods, Goods.Repo,
+    url: database_url,
+    ssl: true,
+    ssl_opts: [verify: :verify_none],
+    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
+    socket_options: maybe_ipv6
 
-config :goods, GoodsWeb.Endpoint,
-  url: [host: host, port: url_port, scheme: url_scheme],
-  http: [
-    ip: {0, 0, 0, 0},
-    port: port
-  ],
-  check_origin: [
-    "https://#{host}",
-    "https://parcel-loidc.ondigitalocean.app"
-  ],
-  secret_key_base: secret_key_base
+  config :goods, GoodsWeb.Endpoint,
+    url: [host: host, port: url_port, scheme: url_scheme],
+    http: [
+      ip: {0, 0, 0, 0},
+      port: port
+    ],
+    check_origin: [
+      "https://#{host}",
+      "https://parcel-loidc.ondigitalocean.app"
+    ],
+    secret_key_base: secret_key_base
 
   config :goods,
     token_signing_secret:
