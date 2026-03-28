@@ -47,6 +47,4 @@ defmodule GoodsWeb.DashboardLive do
     |> DateTime.add(3 * 60 * 60, :second)
     |> Calendar.strftime("%d %b %Y %H:%M")
   end
-
-
 end

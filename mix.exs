@@ -79,7 +79,8 @@ defmodule Goods.MixProject do
       {:gettext, "~> 1.0"},
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.2.0"},
-      {:bandit, "~> 1.5"}
+      {:cowboy, "~> 2.10"},
+      {:plug_cowboy, "~> 2.6"}
     ]
   end
 

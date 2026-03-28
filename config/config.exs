@@ -59,7 +59,8 @@ config :goods,
 # Configure the endpoint
 config :goods, GoodsWeb.Endpoint,
   url: [host: "localhost"],
-  adapter: Bandit.PhoenixAdapter,
+  adapter: Phoenix.Endpoint.Cowboy2Adapter,
+  # adapter: Bandit.PhoenixAdapter,
   render_errors: [
     formats: [html: GoodsWeb.ErrorHTML, json: GoodsWeb.ErrorJSON],
     layout: false
