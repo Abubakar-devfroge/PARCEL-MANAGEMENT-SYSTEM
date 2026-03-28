@@ -212,7 +212,10 @@ const EnterpriseReportCharts = {
     }
   }
 }
+
+const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 const liveSocket = new LiveSocket("/live", Socket, {
+  longPollFallbackMs:  31_536_000_000,
   params: {_csrf_token: csrfToken},
   hooks: {...colocatedHooks, EnterpriseReportCharts},
 })
