@@ -68,7 +68,7 @@
     >
 
       <!-- STEP 1 -->
-      <div :if={@current_step == 1} class="mb-6">
+<div class={if @current_step == 1, do: "mb-6", else: "hidden mb-6"}>
         <div class="px-4 py-2 space-y-4">
           <.input field={@form[:sender_name]} type="text" label="Sender Name" minlength="3" maxlength="15" required />
           <.input field={@form[:sender_id]} type="text" label="Sender ID" required />
@@ -81,7 +81,7 @@
       </div>
 
       <!-- STEP 2 -->
-      <div :if={@current_step == 2} class="mb-6">
+<div class={if @current_step == 2, do: "mb-6", else: "hidden mb-6"}>
         <div class="px-4 py-2 space-y-4">
           <.input field={@form[:origin_office_id]} type="select" label="Origin Office" options={@origin_options} prompt="Select origin office" required />
           <.input field={@form[:destination_office_id]} type="select" label="Destination Office" options={@destination_options} prompt="Select destination office" required />
@@ -89,7 +89,7 @@
       </div>
 
       <!-- STEP 3 -->
-      <div :if={@current_step == 3} class="mb-6">
+<div class={if @current_step == 3, do: "mb-6", else: "hidden mb-6"}>
         <div class="px-4 py-2 space-y-4">
           <.input field={@form[:parcel_type]} type="text" label="Parcel Type" required />
           <.input field={@form[:quantity]} type="number" label="Quantity" min="1" required />
