@@ -395,7 +395,7 @@ defmodule GoodsWeb.ParcelReportLive do
 
   defp maybe_add_alert(alerts, false, _level, _message), do: alerts
 
-  defp alert_class(:warning), do: "border-amber-200 bg-amber-50 text-amber-800"
+  defp alert_class(:warning), do: "border-amber-200 bg-amber-50 text-amber-600"
   defp alert_class(:info), do: "border-blue-200 bg-blue-50 text-blue-800"
 
   defp normalize_tab(tab) when tab in @valid_tabs, do: tab
