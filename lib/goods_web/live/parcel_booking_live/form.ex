@@ -4,114 +4,9 @@ defmodule GoodsWeb.ParcelBookingLive.Form do
   require Ash.Query
   require Logger
 
-  @impl true
-  def render(assigns) do
-    ~H"""
-    <Layouts.app flash={@flash}>
-      <.header>
-        {@page_title}
-      </.header>
+  @max_step 3
 
-      <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
-        <.form
-          for={@form}
-          id="parcel_booking-form"
-          phx-change="validate"
-          phx-submit="save"
-        >
-          <!-- Sender Details -->
-          <.input
-            field={@form[:sender_name]}
-            type="text"
-            label="Sender Name"
-            minlength="3"
-            maxlength="15"
-            required
-          />
-          <.input
-            field={@form[:sender_id]}
-            type="text"
-            label="Sender ID"
-            required
-          />
-          <.input
-            field={@form[:sender_phone]}
-            type="text"
-            label="Sender Phone"
-            required
-          />
-          
-    <!-- Receiver Details -->
-          <.input
-            field={@form[:receiver_name]}
-            type="text"
-            label="Receiver Name"
-            minlength="3"
-            maxlength="15"
-            required
-          />
-          <.input
-            field={@form[:receiver_id]}
-            type="text"
-            label="Receiver ID"
-          />
-          <.input
-            field={@form[:receiver_phone]}
-            type="text"
-            label="Receiver Phone"
-            required
-          />
-          
-    <!-- Parcel Details -->
-          <.input
-            field={@form[:origin_office_id]}
-            type="select"
-            label="Origin Office"
-            options={@origin_options}
-            prompt="Select origin office"
-            required
-          />
-          <.input
-            field={@form[:destination_office_id]}
-            type="select"
-            label="Destination Office"
-            options={@destination_options}
-            prompt="Select destination office"
-            required
-          />
-          <.input field={@form[:route_id]} type="hidden" />
-          <.input field={@form[:destination]} type="hidden" />
-          <.input
-            field={@form[:parcel_type]}
-            type="text"
-            label="Parcel Type"
-            required
-          />
-          <.input
-            field={@form[:quantity]}
-            type="number"
-            label="Quantity"
-            min="1"
-            required
-          />
-          <.input
-            field={@form[:price]}
-            type="number"
-            label="Price"
-            step="any"
-            required
-          />
-          
-    <!-- Buttons -->
-          <div class="mt-6 flex gap-4">
-            <.button phx-disable-with="Booking..." variant="primary">Book Parcel</.button>
-            <.button navigate={return_path(@return_to, @parcel_booking)}>Cancel</.button>
-          </div>
-        </.form>
-      </div>
-    </Layouts.app>
-    """
-  end
+
 
   @impl true
   def mount(params, _session, socket) do
@@ -130,6 +25,7 @@ defmodule GoodsWeb.ParcelBookingLive.Form do
     {:ok,
      socket
      |> assign(:return_to, return_to(params["return_to"]))
+      |> assign(:current_step, 1)
      |> assign(:routing_setup, routing_setup)
      |> assign(:origin_options, routing_setup.origin_options)
      |> assign(:parcel_booking, parcel_booking)
@@ -141,6 +37,16 @@ defmodule GoodsWeb.ParcelBookingLive.Form do
   # Return path helper
   defp return_to("show"), do: "show"
   defp return_to(_), do: "index"
+
+  @impl true
+  def handle_event("next_step", _params, socket) do
+    {:noreply, assign(socket, :current_step, min(socket.assigns.current_step + 1, @max_step))}
+  end
+
+  @impl true
+  def handle_event("prev_step", _params, socket) do
+    {:noreply, assign(socket, :current_step, max(socket.assigns.current_step - 1, 1))}
+  end
 
   @impl true
   def handle_event("validate", %{"parcel_booking" => parcel_booking_params}, socket) do

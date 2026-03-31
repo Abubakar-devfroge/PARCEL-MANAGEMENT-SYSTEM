@@ -35,42 +35,42 @@ defmodule GoodsWeb.Navigation do
               <nav class="space-y-1" aria-label="Sidebar">
                 <.link
                   navigate={~p"/dash"}
-                  class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-md font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
+                  class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
                 >
                   <.icon
                     name="hero-home"
-                    class="h-5 w-5 text-white/90 transition-colors group-hover:text-white"
+                    class="h-6 w-6 text-white transition-colors group-hover:text-white"
                   />
                   <span class="desktop-sidebar-label">Dashboard</span>
                 </.link>
 
                 <.link
                   navigate={~p"/parcel_bookings"}
-                  class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-md font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
+                  class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
                 >
                   <.icon
                     name="hero-archive-box"
-                    class="h-5 w-5 text-white/90 transition-colors group-hover:text-white"
+                    class="h-6 w-6 text-white/90 transition-colors group-hover:text-white"
                   /> <span class="desktop-sidebar-label">Parcels</span>
                 </.link>
 
                 <.link
                   navigate={~p"/parcel_bookings/new"}
-                  class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-md font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
+                  class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
                 >
                   <.icon
                     name="hero-plus-circle"
-                    class="h-5 w-5 text-white/90 transition-colors group-hover:text-white"
+                    class="h-6 w-6 text-white/90 transition-colors group-hover:text-white"
                   /> <span class="desktop-sidebar-label">New Parcel</span>
                 </.link>
 
                 <.link
                   navigate={~p"/parcel_reports"}
-                  class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-md font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
+                  class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
                 >
                   <.icon
                     name="hero-cog-6-tooth"
-                    class="h-5 w-5 text-white/90 transition-colors group-hover:text-white"
+                    class="h-6 w-6 text-white/90 transition-colors group-hover:text-white"
                   /> <span class="desktop-sidebar-label">Reports</span>
                 </.link>
               </nav>
@@ -78,11 +78,11 @@ defmodule GoodsWeb.Navigation do
               <div class="mt-auto border-t border-white/20 pt-4">
                 <.link
                   href={~p"/sign-out"}
-                  class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-md font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
+                  class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
                 >
                   <.icon
                     name="hero-arrow-right-on-rectangle"
-                    class="h-5 w-5 text-white/90 transition-colors group-hover:text-white"
+                    class="h-6 w-6 text-white/90 transition-colors group-hover:text-white"
                   /> <span class="desktop-sidebar-label">Log out</span>
                 </.link>
               </div>
@@ -90,7 +90,7 @@ defmodule GoodsWeb.Navigation do
           </aside>
 
           <div id="desktop-main" class="flex flex-1 flex-col lg:pl-50 transition-all duration-300">
-            <header class="sticky top-0 z-30 border-b border-blue-100 bg-white/95 backdrop-blur">
+            <header class="sticky top-0 z-30 border-b border-gray-100 bg-white/95 shadow-sm backdrop-blur">
               <div class="flex h-14 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
                 <button
                   class="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-700 ring-1 ring-gray-300 transition hover:bg-gray-50 lg:hidden"
@@ -108,7 +108,7 @@ defmodule GoodsWeb.Navigation do
                     )
                   }
                 >
-                  <.icon name="hero-bars-3" class="h-5 w-5" />
+                  <.icon name="hero-bars-3" class="h-6 w-6" />
                 </button>
 
                 <button
@@ -127,7 +127,7 @@ defmodule GoodsWeb.Navigation do
                     |> JS.toggle_class("justify-center", to: ".desktop-nav-link")
                   }
                 >
-                  <.icon name="hero-bars-3" class="h-5 w-5" />
+                  <.icon name="hero-bars-3" class="h-6 w-6" />
                 </button>
 
                 <div class="ml-auto">
@@ -240,35 +240,35 @@ defmodule GoodsWeb.Navigation do
                   )
                 }
               >
-                <.icon name="hero-x-mark" class="h-5 w-5" />
+                <.icon name="hero-x-mark" class="h-6 w-6" />
               </button>
             </div>
 
             <nav class="space-y-1" aria-label="Mobile sidebar">
               <.link
                 navigate={~p"/dash"}
-                class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-md font-medium text-white hover:bg-white/10"
+                class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white hover:bg-white/10"
               >
-                <.icon name="hero-home" class="h-5 w-5 text-white/90" /> Dashboard
+                <.icon name="hero-home" class="h-6 w-6 text-white/90" /> Dashboard
               </.link>
               <.link
                 navigate={~p"/parcel_bookings"}
-                class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-md font-medium text-white hover:bg-white/10"
+                class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white hover:bg-white/10"
               >
-                <.icon name="hero-archive-box" class="h-5 w-5 text-white/90" /> Parcels
+                <.icon name="hero-archive-box" class="h-6 w-6 text-white/90" /> Parcels
               </.link>
               <.link
                 navigate={~p"/profile"}
-                class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-md font-medium text-white hover:bg-white/10"
+                class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white hover:bg-white/10"
               >
-                <.icon name="hero-cog-6-tooth" class="h-5 w-5 text-white/90" /> Reports
+                <.icon name="hero-cog-6-tooth" class="h-6 w-6 text-white/90" /> Reports
               </.link>
             </nav>
           </div>
         </div>
       </div>
     <% else %>
-      <header class="navbar px-4 sm:px-6 lg:px-8 bg-white  flex items-center shadow-md h-16">
+      <header class="navbar px-4 sm:px-6 lg:px-8 bg-white  flex items-center h-16">
         <div class="flex-1">
           <a
             href={~p"/"}
