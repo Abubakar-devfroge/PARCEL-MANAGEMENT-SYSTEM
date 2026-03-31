@@ -51,75 +51,83 @@ defmodule GoodsWeb.CoreComponents do
     assigns = assign_new(assigns, :id, fn -> "flash-#{assigns.kind}" end)
 
     ~H"""
-   <div
-  :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
-  id={@id}
-  phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
-  role="alert"
-  class="toast toast-top toast-end z-50"
-  {@rest}
->
-  <div class={[
-    "w-80 sm:w-96 max-w-80 sm:max-w-96 text-wrap rounded-md border p-4 shadow-sm",
-    @kind == :info && "border-green-500 bg-green-50",
-    @kind == :error && "border-red-500 bg-red-50"
-  ]}>
-    <div class="flex items-start gap-4">
-      <svg
-        :if={@kind == :info}
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        class="-mt-0.5 size-6 text-green-700"
-      >
-        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
+    <div
+      :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
+      id={@id}
+      phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
+      role="alert"
+      class="toast toast-top toast-end z-50"
+      {@rest}
+    >
+      <div class={[
+        "w-80 sm:w-96 max-w-80 sm:max-w-96 text-wrap rounded-md border p-4 shadow-sm",
+        @kind == :info && "border-green-500 bg-green-50",
+        @kind == :error && "border-red-500 bg-red-50"
+      ]}>
+        <div class="flex items-start gap-4">
+          <svg
+            :if={@kind == :info}
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="-mt-0.5 size-6 text-green-700"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
 
-      <svg
-        :if={@kind == :error}
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke-width="1.5"
-        stroke="currentColor"
-        class="-mt-0.5 size-6 text-red-700"
-      >
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
-      </svg>
+          <svg
+            :if={@kind == :error}
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="-mt-0.5 size-6 text-red-700"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z"
+            />
+          </svg>
 
-      <div class="flex-1">
-        <strong
-          :if={@title}
-          class={[
-            "block leading-tight font-medium",
-            @kind == :info && "text-green-800",
-            @kind == :error && "text-red-800"
-          ]}
-        >
-          {@title}
-        </strong>
+          <div class="flex-1">
+            <strong
+              :if={@title}
+              class={[
+                "block leading-tight font-medium",
+                @kind == :info && "text-green-800",
+                @kind == :error && "text-red-800"
+              ]}
+            >
+              {@title}
+            </strong>
 
-        <p class={[
-          "mt-0.5 text-sm",
-          @kind == :info && "text-green-700",
-          @kind == :error && "text-red-700"
-        ]}>
-          {msg}
-        </p>
+            <p class={[
+              "mt-0.5 text-sm",
+              @kind == :info && "text-green-700",
+              @kind == :error && "text-red-700"
+            ]}>
+              {msg}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            class="self-start cursor-pointer opacity-40 hover:opacity-70"
+            aria-label={gettext("close")}
+          >
+            <.icon name="hero-x-mark" class="size-5" />
+          </button>
+        </div>
       </div>
-
-      <button
-        type="button"
-        class="self-start cursor-pointer opacity-40 hover:opacity-70"
-        aria-label={gettext("close")}
-      >
-        <.icon name="hero-x-mark" class="size-5" />
-      </button>
     </div>
-  </div>
-</div>
     """
   end
 
@@ -140,7 +148,7 @@ defmodule GoodsWeb.CoreComponents do
   def button(%{rest: rest} = assigns) do
     variants = %{
       "primary" =>
-        "font-medium text-base bg-black text-white rounded-md  px-4 py-4 hover:bg-amber-700 hover:text-white  transition-colors duration-300",
+        "font-medium text-base bg-black text-white rounded-md  px-4 py-4 hover:bg-amber-600 hover:text-white  transition-colors duration-300",
       nil =>
         "font-medium text-base bg-gray-100 text-gray-900 rounded-md  px-4 py-4 hover:bg-gray-400 hover:text-gray-900 transition-colors duration-300"
     }
@@ -270,7 +278,10 @@ defmodule GoodsWeb.CoreComponents do
             name={@name}
             value="true"
             checked={@checked}
-            class={@class || "checkbox checkbox-sm"}
+            class={
+              @class ||
+                "checkbox checkbox-sm focus-visible:outline-2 focus-visible:outline-amber-600 focus-visible:outline-offset-2"
+            }
             {@rest}
           />{@label}
         </span>
@@ -284,17 +295,27 @@ defmodule GoodsWeb.CoreComponents do
     ~H"""
     <div class="fieldset mb-2">
       <label>
-        <span :if={@label} class="label mb-1">{@label}</span>
-        <select
-          id={@id}
-          name={@name}
-          class={[@class || "w-full select", @errors != [] && (@error_class || "select-error")]}
-          multiple={@multiple}
-          {@rest}
-        >
-          <option :if={@prompt} value="">{@prompt}</option>
-          {Phoenix.HTML.Form.options_for_select(@options, @value)}
-        </select>
+        <span :if={@label} class="block text-sm/6 font-medium text-gray-900">{@label}</span>
+        <div class="mt-2 grid grid-cols-1">
+          <select
+            id={@id}
+            name={@name}
+            class={[
+              @class ||
+                "col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-amber-600 sm:text-sm/6",
+              @errors != [] && (@error_class || "outline-red-500 focus-visible:outline-red-600")
+            ]}
+            multiple={@multiple}
+            {@rest}
+          >
+            <option :if={@prompt} value="">{@prompt}</option>
+            {Phoenix.HTML.Form.options_for_select(@options, @value)}
+          </select>
+          <.icon
+            name="hero-chevron-up-down"
+            class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"
+          />
+        </div>
       </label>
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>
@@ -310,7 +331,8 @@ defmodule GoodsWeb.CoreComponents do
           id={@id}
           name={@name}
           class={[
-            @class || "w-full textarea",
+            @class ||
+              "w-full textarea bg-white outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-amber-600",
             @errors != [] && (@error_class || "textarea-error")
           ]}
           {@rest}
@@ -326,21 +348,23 @@ defmodule GoodsWeb.CoreComponents do
     ~H"""
     <div class="fieldset mb-2">
       <label>
-        <span :if={@label} class="label mb-1">{@label}</span>
-        <input
-          type={@type}
-          name={@name}
-          id={@id}
-          value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-          class={[
-            @class || "w-full input",
-            @errors != [] && (@error_class || "input-error")
-          ]}
-          {@rest}
-          class="w-full rounded-full border border-gray-300 bg-white px-4 py-2 text-gray-900
-    		focus:border-blue-600 focus:ring-4 focus:ring-blue-600/10
-    		transition"
-        />
+        <span :if={@label} class="block text-sm/6 font-medium text-gray-900">{@label}</span>
+        <div class="mt-2">
+          <div class="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 has-[input:focus-within]:outline-2 has-[input:focus-within]:-outline-offset-2 has-[input:focus-within]:outline-amber-600">
+            <input
+              type={@type}
+              name={@name}
+              id={@id}
+              value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+              class={[
+                @class ||
+                  "block min-w-0 grow bg-transparent py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6",
+                @errors != [] && (@error_class || "input-error")
+              ]}
+              {@rest}
+            />
+          </div>
+        </div>
       </label>
       <.error :for={msg <- @errors}>{msg}</.error>
     </div>

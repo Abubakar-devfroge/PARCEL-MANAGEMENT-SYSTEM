@@ -2,6 +2,7 @@ defmodule GoodsWeb.ParcelReportLive do
   use GoodsWeb, :live_view
 
   @refresh_interval 30_000
+  @valid_tabs ["summary", "analytics", "customers", "financial", "shipments"]
 
   @impl true
   def mount(_params, _session, socket) do
@@ -17,6 +18,7 @@ defmodule GoodsWeb.ParcelReportLive do
     {:ok,
      socket
      |> assign(:page_title, "Parcel Management Reports")
+     |> assign(:active_tab, "summary")
      |> assign(:filters, filters)
      |> assign(:all_bookings_count, length(parcel_bookings))
      |> assign(:filtered_bookings_count, length(filtered_bookings))
@@ -26,6 +28,13 @@ defmodule GoodsWeb.ParcelReportLive do
      |> assign(:alerts, build_alerts(report_data, filtered_bookings))
      |> assign(:last_updated_at, DateTime.utc_now())
      |> stream(:custom_rows, filtered_bookings)}
+  end
+
+  @impl true
+  def handle_params(params, _uri, socket) do
+    active_tab = params |> Map.get("tab") |> normalize_tab()
+
+    {:noreply, assign(socket, :active_tab, active_tab)}
   end
 
   @impl true
@@ -386,36 +395,19 @@ defmodule GoodsWeb.ParcelReportLive do
 
   defp maybe_add_alert(alerts, false, _level, _message), do: alerts
 
-  defp format_eat_datetime(nil), do: "—"
-
-  defp format_eat_datetime(%DateTime{} = utc_datetime) do
-    utc_datetime
-    |> DateTime.add(3 * 60 * 60, :second)
-    |> Calendar.strftime("%d %b %Y %H:%M")
-  end
-
-  defp format_eat_datetime(%NaiveDateTime{} = naive_datetime) do
-    naive_datetime
-    |> NaiveDateTime.add(3 * 60 * 60, :second)
-    |> Calendar.strftime("%d %b %Y %H:%M")
-  end
-
-  defp format_eat_datetime(_), do: "—"
-
   defp alert_class(:warning), do: "border-amber-200 bg-amber-50 text-amber-800"
   defp alert_class(:info), do: "border-blue-200 bg-blue-50 text-blue-800"
 
-  defp export_path(report, format, filters) do
-    normalized_filters =
-      Enum.into(filters, %{}, fn {key, value} -> {to_string(key), to_string(value || "")} end)
+  defp normalize_tab(tab) when tab in @valid_tabs, do: tab
+  defp normalize_tab(_), do: "summary"
 
-    query =
-      Plug.Conn.Query.encode(%{
-        "report" => report,
-        "format" => format,
-        "filters" => normalized_filters
-      })
-
-    "/parcel_reports/export?" <> query
+  defp tab_class(active_tab, tab) do
+    [
+      "border-b-2 px-1 py-3 text-sm font-medium transition",
+      if(active_tab == tab,
+        do: "border-red-500 text-red-600",
+        else: "border-transparent text-gray-500 hover:text-gray-700"
+      )
+    ]
   end
 end

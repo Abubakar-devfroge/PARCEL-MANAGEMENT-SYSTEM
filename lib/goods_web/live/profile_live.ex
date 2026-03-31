@@ -33,18 +33,18 @@ defmodule GoodsWeb.ProfileLive do
         <div class="border border-gray-200 bg-white shadow-md rounded-none">
           <div class="border-b border-gray-200 px-4 py-3 sm:px-6 ">
             <h1 class="text-xl font-semibold text-gray-900">Profile</h1>
-            <p class="mt-1 text-sm text-gray-500">Personal and license information</p>
           </div>
 
           <div class="border-b border-gray-200 bg-gray-50 px-4 py-2 sm:px-6">
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-6 border-b border-gray-200">
               <.link
                 patch={~p"/profile?tab=personal"}
                 class={[
-                  "rounded-md px-3 py-1.5 text-sm font-medium transition",
+                  "pb-3 text-sm font-medium transition border-b-2",
                   @active_tab == "personal" &&
-                    "border border-amber-300 bg-amber-100 text-amber-900",
-                  @active_tab != "personal" && "text-amber-800 hover:bg-amber-50 hover:text-amber-900"
+                    "border-blue-600 text-gray-900",
+                  @active_tab != "personal" &&
+                    "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                 ]}
               >
                 Personal Information
@@ -53,10 +53,11 @@ defmodule GoodsWeb.ProfileLive do
               <.link
                 patch={~p"/profile?tab=license"}
                 class={[
-                  "rounded-md px-3 py-1.5 text-sm font-medium transition",
+                  "pb-3 text-sm font-medium transition border-b-2",
                   @active_tab == "license" &&
-                    "border border-amber-300 bg-amber-100 text-amber-900",
-                  @active_tab != "license" && "text-amber-800 hover:bg-amber-50 hover:text-amber-900"
+                    "border-blue-600 text-gray-900",
+                  @active_tab != "license" &&
+                    "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
                 ]}
               >
                 License Information

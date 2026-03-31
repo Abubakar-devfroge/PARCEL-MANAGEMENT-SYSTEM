@@ -90,47 +90,40 @@
               field={@form[:business_phone]}
               type="text"
               label="Business Phone Number"
-              placeholder="0724989025"
               required
             />
             <.input
               field={@form[:brand_logo]}
               type="url"
               label="Brand / Logo URL (Optional)"
-              placeholder="https://example.com/logo.png"
             />
             <.input
               field={@form[:base_office]}
               type="text"
               label="Base Office (Primary Hub)"
-              placeholder="Defaults to Primary City if empty"
             />
             <.input
               field={@form[:branch_offices]}
               type="textarea"
               label="Branch Offices"
-              placeholder="One office per line"
               rows="3"
             />
             <.input
               field={@form[:delivery_destinations]}
               type="textarea"
               label="Delivery Destinations"
-              placeholder="One destination per line"
               rows="3"
             />
             <.input
               field={@form[:transfer_points]}
               type="textarea"
               label="Transfer Points"
-              placeholder="One transfer point per line"
               rows="3"
             />
             <.input
               field={@form[:valid_routes]}
               type="textarea"
               label="Valid Routes"
-              placeholder="Format: Origin -> Destination (one route per line)"
               rows="4"
             />
           </div>

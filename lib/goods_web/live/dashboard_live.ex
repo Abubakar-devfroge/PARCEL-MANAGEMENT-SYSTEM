@@ -1,12 +1,15 @@
 defmodule GoodsWeb.DashboardLive do
   use GoodsWeb, :live_view
 
+  require Ash.Query
+
   @impl true
   def mount(_params, _session, socket) do
     {:ok,
      socket
      |> assign(:page_title, "Dashboard")
      |> assign(:last_refreshed_at, nil)
+     |> assign(:company_name, get_company_name(socket.assigns.current_user))
      |> load_dashboard_data()}
   end
 
@@ -46,5 +49,26 @@ defmodule GoodsWeb.DashboardLive do
     utc_datetime
     |> DateTime.add(3 * 60 * 60, :second)
     |> Calendar.strftime("%d %b %Y %H:%M")
+  end
+
+  defp get_company_name(current_user) do
+    profile =
+      Goods.Accounts.BusinessProfile
+      |> Ash.Query.filter(user_id == ^current_user.id)
+      |> Ash.read_one(actor: current_user)
+
+    case profile do
+      {:ok, %{company_name: company_name}} when is_binary(company_name) ->
+        trimmed_company_name = String.trim(company_name)
+
+        if trimmed_company_name == "" do
+          current_user.email
+        else
+          trimmed_company_name
+        end
+
+      _ ->
+        current_user.email
+    end
   end
 end

@@ -1,275 +1,197 @@
 <Layouts.app flash={@flash}>
-  <section class="enterprise-report mx-auto max-w-7xl space-y-6 px-4 py-6 sm:px-6 lg:px-8">
-    <div class="report-hero rounded-3xl border p-6 shadow-xl sm:p-8">
-      <div class="grid gap-5 lg:grid-cols-[1.6fr_1fr] lg:items-end">
-        <div class="grid grid-cols-2 gap-3 text-right sm:grid-cols-3">
-          <article class="kpi-tile">
-            <p class="kpi-label">All Shipments</p>
-            <p class="kpi-value">{@all_bookings_count}</p>
-          </article>
-          <article class="kpi-tile">
-            <p class="kpi-label">Filtered</p>
-            <p class="kpi-value">{@filtered_bookings_count}</p>
-          </article>
-          <article class="kpi-tile col-span-2 sm:col-span-1">
-            <p class="kpi-label">Pending Value</p>
-            <p class="kpi-value text-lg sm:text-xl">
-              KES {decimal_to_money(@report_data.financial_reports.pending_payments_amount)}
-            </p>
-          </article>
+  <div class="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+    <div class="border border-gray-200 bg-white shadow-md rounded-none">
+      
+<!-- Header -->
+      <div class="border-b border-gray-200 px-4 py-3 sm:px-6">
+        <h1 class="text-xl font-semibold text-gray-900">Reports</h1>
+      </div>
+      
+<!-- Tabs -->
+      <div class="border-b border-gray-200 bg-gray-50 px-4 py-2 sm:px-6">
+        <div class="flex items-center gap-6 border-b border-gray-200">
+          <.link patch={~p"/parcel_reports?tab=summary"} class={tab_class(@active_tab, "summary")}>
+            Summary
+          </.link>
+
+          <.link
+            patch={~p"/parcel_reports?tab=analytics"}
+            class={tab_class(@active_tab, "analytics")}
+          >
+            Analytics
+          </.link>
+
+          <.link
+            patch={~p"/parcel_reports?tab=customers"}
+            class={tab_class(@active_tab, "customers")}
+          >
+            Customers
+          </.link>
+
+          <.link
+            patch={~p"/parcel_reports?tab=financial"}
+            class={tab_class(@active_tab, "financial")}
+          >
+            Financial
+          </.link>
+
+          <.link
+            patch={~p"/parcel_reports?tab=shipments"}
+            class={tab_class(@active_tab, "shipments")}
+          >
+            Shipments
+          </.link>
         </div>
       </div>
-    </div>
-
-    <div :for={alert <- @alerts} class={["report-alert", alert_class(alert.level)]}>
-      {alert.message}
-    </div>
-
-    <div
-      id="parcel-report-charts"
-      phx-hook="EnterpriseReportCharts"
-      data-chart-payload={@chart_payload}
-      class="report-surface rounded-3xl border p-5 sm:p-6"
-    >
-      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h2 class="text-sm font-semibold uppercase tracking-[0.18em] text-gray-700">
-          Executive Visual Analytics
+      
+<!-- SUMMARY -->
+      <section :if={@active_tab == "summary"} class="px-4 py-4 sm:px-6">
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-700">
+          Summary
         </h2>
 
-        <div class="chart-toggle-group">
-          <button type="button" class="chart-toggle is-active" data-chart-target="trend">
-            Trend
-          </button>
-          <button type="button" class="chart-toggle" data-chart-target="revenue">
-            Revenue Mix
-          </button>
-          <button type="button" class="chart-toggle" data-chart-target="routes">
-            Route Load
-          </button>
-          <button type="button" class="chart-toggle" data-chart-target="activity">
-            Activity Pulse
-          </button>
+        <div class="mt-4 overflow-x-auto border border-gray-200">
+          <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <tbody class="divide-y divide-gray-200 bg-white">
+              <tr>
+                <th class="w-1/3 bg-gray-50 px-4 py-3 text-left font-medium text-gray-700">
+                  All Shipments
+                </th>
+                <td class="px-4 py-3">{@all_bookings_count}</td>
+              </tr>
+              <tr>
+                <th class="bg-gray-50 px-4 py-3 text-left font-medium text-gray-700">
+                  Filtered Shipments
+                </th>
+                <td class="px-4 py-3">{@filtered_bookings_count}</td>
+              </tr>
+              <tr>
+                <th class="bg-gray-50 px-4 py-3 text-left font-medium text-gray-700">
+                  Pending Value
+                </th>
+                <td class="px-4 py-3">
+                  KES {decimal_to_money(@report_data.financial_reports.pending_payments_amount)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-      </div>
+        
+<!-- Alerts -->
+        <div class="mt-4">
+          <div
+            :for={alert <- @alerts}
+            class={["mb-2 border px-4 py-3 text-sm font-medium", alert_class(alert.level)]}
+          >
+            {alert.message}
+          </div>
+        </div>
+      </section>
+      
+<!-- ANALYTICS -->
+      <section :if={@active_tab == "analytics"} class="px-4 py-4 sm:px-6">
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-700">
+          Visual Analytics
+        </h2>
 
-      <div class="mt-5">
-        <div class="chart-panel is-active" data-chart-panel="trend">
+        <div class="mt-4 border border-gray-200 p-4">
           <canvas id="chart-shipments-trend" height="130"></canvas>
         </div>
-        <div class="chart-panel" data-chart-panel="revenue">
-          <canvas id="chart-revenue-type" height="130"></canvas>
-        </div>
-        <div class="chart-panel" data-chart-panel="routes">
-          <canvas id="chart-routes" height="130"></canvas>
-        </div>
-        <div class="chart-panel" data-chart-panel="activity">
-          <canvas id="chart-activity" height="130"></canvas>
-        </div>
-      </div>
-    </div>
+      </section>
+      
+<!-- CUSTOMERS -->
+      <section :if={@active_tab == "customers"} class="px-4 py-4 sm:px-6">
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-700">
+          Customer Leaders
+        </h2>
 
-    <div class="grid grid-cols-1 gap-6 xl:grid-cols-2">
-      <section class="report-surface rounded-3xl border">
-        <header class="report-section-head">
-          <h3>Customer Leaders</h3>
-          <div class="flex gap-2">
-            <.link
-              id="export-customers-csv"
-              href={export_path("customers", "csv", @filters)}
-              class="report-pill"
-            >
-              CSV
-            </.link>
-            <.link
-              id="export-customers-excel"
-              href={export_path("customers", "excel", @filters)}
-              class="report-pill is-primary"
-            >
-              Excel
-            </.link>
-          </div>
-        </header>
-
-        <div class="overflow-x-auto">
-          <table class="report-table min-w-full text-sm">
-            <thead>
+        <div class="mt-4 overflow-x-auto border border-gray-200">
+          <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <thead class="bg-gray-50">
               <tr>
-                <th>Sender</th>
-                <th>Phone</th>
-                <th>Shipments</th>
-                <th>Revenue</th>
+                <th class="px-4 py-3 text-left font-medium text-gray-700">Sender</th>
+                <th class="px-4 py-3 text-left font-medium text-gray-700">Phone</th>
+                <th class="px-4 py-3 text-right font-medium text-gray-700">Shipments</th>
+                <th class="px-4 py-3 text-right font-medium text-gray-700">Revenue</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody class="divide-y divide-gray-200 bg-white">
               <tr :for={row <- @report_data.customer_reports.top_customers}>
-                <td>{row.sender_name}</td>
-                <td>{row.sender_phone}</td>
-                <td>{row.total_shipments}</td>
-                <td>KES {decimal_to_money(row.total_revenue)}</td>
+                <td class="px-4 py-3">{row.sender_name}</td>
+                <td class="px-4 py-3">{row.sender_phone}</td>
+                <td class="px-4 py-3 text-right">{row.total_shipments}</td>
+                <td class="px-4 py-3 text-right">
+                  KES {decimal_to_money(row.total_revenue)}
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
       </section>
+      
+<!-- FINANCIAL -->
+      <section :if={@active_tab == "financial"} class="px-4 py-4 sm:px-6">
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-700">
+          Financial Performance
+        </h2>
 
-      <section class="report-surface rounded-3xl border">
-        <header class="report-section-head">
-          <h3>Financial Performance</h3>
-          <div class="flex gap-2">
-            <.link
-              id="export-financial-csv"
-              href={export_path("financial", "csv", @filters)}
-              class="report-pill"
-            >
-              CSV
-            </.link>
-            <.link
-              id="export-financial-excel"
-              href={export_path("financial", "excel", @filters)}
-              class="report-pill is-primary"
-            >
-              Excel
-            </.link>
-          </div>
-        </header>
-
-        <div class="grid grid-cols-2 gap-4 px-5 pb-5 pt-4">
-          <article class="stat-card">
-            <p>Pending Payments</p>
-            <p class="value">{@report_data.financial_reports.pending_payments_count}</p>
-          </article>
-          <article class="stat-card">
-            <p>Pending Amount</p>
-            <p class="value">
-              KES {decimal_to_money(@report_data.financial_reports.pending_payments_amount)}
-            </p>
-          </article>
-        </div>
-
-        <div class="overflow-x-auto px-5 pb-5">
-          <table class="report-table min-w-full text-sm">
-            <thead>
+        <div class="mt-4 overflow-x-auto border border-gray-200">
+          <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <tbody class="divide-y divide-gray-200 bg-white">
               <tr>
-                <th>Parcel Type</th>
-                <th>Shipments</th>
-                <th>Revenue</th>
+                <th class="w-1/2 bg-gray-50 px-4 py-3 text-left font-medium text-gray-700">
+                  Pending Payments
+                </th>
+                <td class="px-4 py-3">
+                  {@report_data.financial_reports.pending_payments_count}
+                </td>
+              </tr>
+              <tr>
+                <th class="bg-gray-50 px-4 py-3 text-left font-medium text-gray-700">
+                  Pending Amount
+                </th>
+                <td class="px-4 py-3">
+                  KES {decimal_to_money(@report_data.financial_reports.pending_payments_amount)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+      
+<!-- SHIPMENTS -->
+      <section :if={@active_tab == "shipments"} class="px-4 py-4 sm:px-6">
+        <h2 class="text-sm font-semibold uppercase tracking-wide text-gray-700">
+          Shipment Details
+        </h2>
+
+        <div class="mt-4 overflow-x-auto border border-gray-200">
+          <table class="min-w-full divide-y divide-gray-200 text-sm">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-3 text-left font-medium text-gray-700">Parcel</th>
+                <th class="px-4 py-3 text-left font-medium text-gray-700">Sender</th>
+                <th class="px-4 py-3 text-left font-medium text-gray-700">Receiver</th>
+                <th class="px-4 py-3 text-left font-medium text-gray-700">Destination</th>
+                <th class="px-4 py-3 text-right font-medium text-gray-700">Qty</th>
+                <th class="px-4 py-3 text-right font-medium text-gray-700">Price</th>
               </tr>
             </thead>
-            <tbody>
-              <tr :for={row <- @report_data.financial_reports.revenue_by_type}>
-                <td>{row.parcel_type}</td>
-                <td>{row.shipments}</td>
-                <td>KES {decimal_to_money(row.revenue)}</td>
+            <tbody class="divide-y divide-gray-200 bg-white">
+              <tr :for={{id, booking} <- @streams.custom_rows} id={id}>
+                <td class="px-4 py-3">{booking.parcel_number}</td>
+                <td class="px-4 py-3">{booking.sender_name}</td>
+                <td class="px-4 py-3">{booking.receiver_name}</td>
+                <td class="px-4 py-3">{booking.destination}</td>
+                <td class="px-4 py-3 text-right">{booking.quantity}</td>
+                <td class="px-4 py-3 text-right">
+                  KES {decimal_to_money(booking.price)}
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
       </section>
     </div>
-
-    <section class="report-surface rounded-3xl border">
-      <header class="report-section-head">
-        <h3>Operational Efficiency and Route Heat</h3>
-        <div class="flex gap-2">
-          <.link
-            id="export-operations-csv"
-            href={export_path("operations", "csv", @filters)}
-            class="report-pill"
-          >
-            CSV
-          </.link>
-          <.link
-            id="export-operations-excel"
-            href={export_path("operations", "excel", @filters)}
-            class="report-pill is-primary"
-          >
-            Excel
-          </.link>
-        </div>
-      </header>
-
-      <div class="grid grid-cols-1 gap-4 px-5 pb-5 pt-4 sm:grid-cols-3">
-        <article class="stat-card">
-          <p>Average Volume</p>
-          <p class="value">{@report_data.operational_reports.average_volume}</p>
-        </article>
-        <article class="stat-card">
-          <p>Top Sender Buckets</p>
-          <p class="value">{length(@report_data.customer_reports.sender_totals)}</p>
-        </article>
-        <article class="stat-card">
-          <p>Top Receiver Buckets</p>
-          <p class="value">{length(@report_data.customer_reports.receiver_totals)}</p>
-        </article>
-      </div>
-
-      <div class="overflow-x-auto px-5 pb-5">
-        <table class="report-table min-w-full text-sm">
-          <thead>
-            <tr>
-              <th>Route</th>
-              <th>Shipment Count</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr :for={row <- @report_data.operational_reports.route_counts}>
-              <td>{row.destination}</td>
-              <td>{row.total_routes}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="report-surface rounded-3xl border">
-      <header class="report-section-head">
-        <h3>Ad-Hoc Shipment Detail</h3>
-        <div class="flex gap-2">
-          <.link
-            id="export-custom-csv"
-            href={export_path("custom", "csv", @filters)}
-            class="report-pill"
-          >
-            CSV
-          </.link>
-          <.link
-            id="export-custom-excel"
-            href={export_path("custom", "excel", @filters)}
-            class="report-pill is-primary"
-          >
-            Excel
-          </.link>
-        </div>
-      </header>
-
-      <div class="overflow-x-auto">
-        <table class="report-table min-w-full text-sm">
-          <thead>
-            <tr>
-              <th>Parcel</th>
-              <th>Sender</th>
-              <th>Receiver</th>
-              <th>Destination</th>
-              <th>Type</th>
-              <th>Qty</th>
-              <th>Price</th>
-              <th>Booked</th>
-            </tr>
-          </thead>
-          <tbody id="custom_reports_rows" phx-update="stream">
-            <tr :for={{id, booking} <- @streams.custom_rows} id={id}>
-              <td>{booking.parcel_number}</td>
-              <td>{booking.sender_name}</td>
-              <td>{booking.receiver_name}</td>
-              <td>{booking.destination}</td>
-              <td>{booking.parcel_type}</td>
-              <td>{booking.quantity}</td>
-              <td>KES {decimal_to_money(booking.price)}</td>
-              <td>{format_eat_datetime(booking.inserted_at)}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-  </section>
+  </div>
 </Layouts.app>

@@ -10,10 +10,9 @@ defmodule GoodsWeb.ParcelBookingLive.Form do
     <Layouts.app flash={@flash}>
       <.header>
         {@page_title}
-        <:subtitle>Use this form to manage parcel bookings in your database.</:subtitle>
       </.header>
 
-      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-xl mx-auto px-4 sm:px-6 lg:px-8">
         <.form
           for={@form}
           id="parcel_booking-form"
@@ -25,7 +24,6 @@ defmodule GoodsWeb.ParcelBookingLive.Form do
             field={@form[:sender_name]}
             type="text"
             label="Sender Name"
-            placeholder="John Doe"
             minlength="3"
             maxlength="15"
             required
@@ -34,14 +32,12 @@ defmodule GoodsWeb.ParcelBookingLive.Form do
             field={@form[:sender_id]}
             type="text"
             label="Sender ID"
-            placeholder="12345678"
             required
           />
           <.input
             field={@form[:sender_phone]}
             type="text"
             label="Sender Phone"
-            placeholder="712345678"
             required
           />
           
@@ -50,7 +46,6 @@ defmodule GoodsWeb.ParcelBookingLive.Form do
             field={@form[:receiver_name]}
             type="text"
             label="Receiver Name"
-            placeholder="Jane Doe"
             minlength="3"
             maxlength="15"
             required
@@ -59,13 +54,11 @@ defmodule GoodsWeb.ParcelBookingLive.Form do
             field={@form[:receiver_id]}
             type="text"
             label="Receiver ID"
-            placeholder="87654321"
           />
           <.input
             field={@form[:receiver_phone]}
             type="text"
             label="Receiver Phone"
-            placeholder="712345678"
             required
           />
           

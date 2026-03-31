@@ -27,10 +27,6 @@ if config_env() != :prod do
   end
 end
 
-# 2. DEBUG (After the loader)
-IO.inspect(System.get_env("AFRICASTALKING_USERNAME"), label: "AFTER LOAD - USERNAME")
-IO.inspect(System.get_env("AFRICASTALKING_API_KEY"), label: "AFTER LOAD - API KEY")
-
 # 2. GENERAL APP CONFIG
 if System.get_env("PHX_SERVER") do
   config :goods, GoodsWeb.Endpoint, server: true

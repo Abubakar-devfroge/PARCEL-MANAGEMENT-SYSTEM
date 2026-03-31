@@ -2,7 +2,6 @@ defmodule GoodsWeb.Navigation do
   @moduledoc """
   Reusable UI components for application navigation.
   """
-
   use GoodsWeb, :html
   attr :current_user, :map, default: nil
   slot :inner_content
@@ -12,7 +11,10 @@ defmodule GoodsWeb.Navigation do
     <%= if @current_user do %>
       <div class="min-h-screen bg-blue-50/60">
         <div class="flex min-h-screen">
-          <aside id="desktop-sidebar" class="hidden lg:flex lg:w-50 lg:fixed lg:inset-y-0 lg:z-40">
+          <aside
+            id="desktop-sidebar"
+            class="hidden lg:flex lg:w-50 lg:fixed lg:inset-y-0 lg:z-40 font-sans antialiased"
+          >
             <div
               id="desktop-sidebar-inner"
               class="flex grow flex-col overflow-y-auto  bg-red-700 px-5 py-6 transition-all duration-300"
@@ -21,7 +23,7 @@ defmodule GoodsWeb.Navigation do
                 <img
                   src={~p"/images/logo1.svg"}
                   class="h-15 w-auto rounded-full"
-                  alt="swiftly logo"
+                  alt="ParcelTracker logo"
                   width="80"
                   height="80"
                   fetchpriority="high"
@@ -33,39 +35,42 @@ defmodule GoodsWeb.Navigation do
               <nav class="space-y-1" aria-label="Sidebar">
                 <.link
                   navigate={~p"/dash"}
-                  class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
+                  class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-md font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
                 >
-                  <.icon name="hero-home" class="size-5 text-white group-hover:text-white" />
+                  <.icon
+                    name="hero-home"
+                    class="h-5 w-5 text-white/90 transition-colors group-hover:text-white"
+                  />
                   <span class="desktop-sidebar-label">Dashboard</span>
                 </.link>
 
                 <.link
                   navigate={~p"/parcel_bookings"}
-                  class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
+                  class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-md font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
                 >
                   <.icon
                     name="hero-archive-box"
-                    class="size-5 text-white group-hover:text-white"
+                    class="h-5 w-5 text-white/90 transition-colors group-hover:text-white"
                   /> <span class="desktop-sidebar-label">Parcels</span>
                 </.link>
 
                 <.link
                   navigate={~p"/parcel_bookings/new"}
-                  class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
+                  class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-md font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
                 >
                   <.icon
                     name="hero-plus-circle"
-                    class="size-5 text-white group-hover:text-white"
+                    class="h-5 w-5 text-white/90 transition-colors group-hover:text-white"
                   /> <span class="desktop-sidebar-label">New Parcel</span>
                 </.link>
 
                 <.link
                   navigate={~p"/parcel_reports"}
-                  class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
+                  class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-md font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
                 >
                   <.icon
                     name="hero-cog-6-tooth"
-                    class="size-5 text-white group-hover:text-white"
+                    class="h-5 w-5 text-white/90 transition-colors group-hover:text-white"
                   /> <span class="desktop-sidebar-label">Reports</span>
                 </.link>
               </nav>
@@ -73,11 +78,11 @@ defmodule GoodsWeb.Navigation do
               <div class="mt-auto border-t border-white/20 pt-4">
                 <.link
                   href={~p"/sign-out"}
-                  class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
+                  class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-md font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
                 >
                   <.icon
                     name="hero-arrow-right-on-rectangle"
-                    class="size-5 text-white group-hover:text-white"
+                    class="h-5 w-5 text-white/90 transition-colors group-hover:text-white"
                   /> <span class="desktop-sidebar-label">Log out</span>
                 </.link>
               </div>
@@ -88,7 +93,7 @@ defmodule GoodsWeb.Navigation do
             <header class="sticky top-0 z-30 border-b border-blue-100 bg-white/95 backdrop-blur">
               <div class="flex h-14 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
                 <button
-                  class="inline-flex items-center justify-center rounded-lg border border-blue-200 p-2 text-blue-700 transition hover:bg-blue-50 lg:hidden"
+                  class="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-700 ring-1 ring-gray-300 transition hover:bg-gray-50 lg:hidden"
                   aria-label="Open menu"
                   phx-click={
                     JS.show(
@@ -103,12 +108,12 @@ defmodule GoodsWeb.Navigation do
                     )
                   }
                 >
-                  <.icon name="hero-bars-3" class="size-6" />
+                  <.icon name="hero-bars-3" class="h-5 w-5" />
                 </button>
 
                 <button
                   type="button"
-                  class="hidden lg:inline-flex items-center justify-center rounded-md bg-white shadow-lg outline-1 outline-black/5 transition hover:bg-blue-50"
+                  class="hidden lg:inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-700 ring-1 ring-gray-300 transition hover:bg-gray-50"
                   aria-label="Toggle sidebar"
                   phx-click={
                     JS.toggle_class("lg:w-50", to: "#desktop-sidebar")
@@ -122,7 +127,7 @@ defmodule GoodsWeb.Navigation do
                     |> JS.toggle_class("justify-center", to: ".desktop-nav-link")
                   }
                 >
-                  <.icon name="hero-bars-3" class="size-5" />
+                  <.icon name="hero-bars-3" class="h-5 w-5" />
                 </button>
 
                 <div class="ml-auto">
@@ -154,7 +159,7 @@ defmodule GoodsWeb.Navigation do
                           href={~p"/profile?tab=personal"}
                           class="block px-4 py-2 text-sm text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden"
                         >
-                          Profile
+                          Account Management
                         </a>
 
                         <a
@@ -168,7 +173,7 @@ defmodule GoodsWeb.Navigation do
                           href={~p"/sign-out"}
                           class="block px-4 py-2 text-sm text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden"
                         >
-                          Sign out
+                          Log out
                         </.link>
                       </div>
                     </el-menu>
@@ -210,7 +215,7 @@ defmodule GoodsWeb.Navigation do
                 <img
                   src={~p"/images/logo1.svg"}
                   class="h-10 w-auto rounded-full"
-                  alt="swiftly logo"
+                  alt="ParcelTracker logo"
                   width="80"
                   height="80"
                   fetchpriority="high"
@@ -220,7 +225,7 @@ defmodule GoodsWeb.Navigation do
 
               <button
                 type="button"
-                class="rounded-lg p-2 text-blue-100 hover:bg-white/10"
+                class="rounded-md bg-white/10 p-2 text-white ring-1 ring-white/20 transition hover:bg-white/20"
                 aria-label="Close menu"
                 phx-click={
                   JS.hide(
@@ -235,28 +240,28 @@ defmodule GoodsWeb.Navigation do
                   )
                 }
               >
-                <.icon name="hero-x-mark" class="size-6" />
+                <.icon name="hero-x-mark" class="h-5 w-5" />
               </button>
             </div>
 
             <nav class="space-y-1" aria-label="Mobile sidebar">
               <.link
                 navigate={~p"/dash"}
-                class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white hover:bg-white/10"
+                class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-md font-medium text-white hover:bg-white/10"
               >
-                <.icon name="hero-home" class="size-5 text-blue-100" /> Dashboard
+                <.icon name="hero-home" class="h-5 w-5 text-white/90" /> Dashboard
               </.link>
               <.link
                 navigate={~p"/parcel_bookings"}
-                class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white hover:bg-white/10"
+                class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-md font-medium text-white hover:bg-white/10"
               >
-                <.icon name="hero-archive-box" class="size-5 text-blue-100" /> Parcels
+                <.icon name="hero-archive-box" class="h-5 w-5 text-white/90" /> Parcels
               </.link>
               <.link
                 navigate={~p"/profile"}
-                class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white hover:bg-white/10"
+                class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-md font-medium text-white hover:bg-white/10"
               >
-                <.icon name="hero-user-circle" class="size-5 text-blue-100" /> Reports
+                <.icon name="hero-cog-6-tooth" class="h-5 w-5 text-white/90" /> Reports
               </.link>
             </nav>
           </div>
@@ -274,7 +279,7 @@ defmodule GoodsWeb.Navigation do
             <img
               src={~p"/images/logo1.svg"}
               class="h-10 w-auto "
-              alt="swiftly logo"
+              alt="ParcelTracker logo"
               width="80"
               height="80"
               fetchpriority="high"
@@ -322,7 +327,7 @@ defmodule GoodsWeb.Navigation do
             <img
               src={~p"/images/logo1.svg"}
               class="h-10 w-auto"
-              alt="swiftly logo"
+              alt="ParcelTracker logo"
               width="80"
               height="80"
               fetchpriority="high"
