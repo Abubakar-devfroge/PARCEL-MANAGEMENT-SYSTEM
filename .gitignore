@@ -40,3 +40,7 @@ npm-debug.log
 .env.*
 !.env.example
 
+# Editor folders
+.vscode/
+.idea/
+*.swp
