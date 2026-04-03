@@ -45,6 +45,29 @@ defmodule GoodsWeb.LiveUserAuth do
     end
   end
 
+  def on_mount(:live_admin_required, _params, _session, socket) do
+    if socket.assigns[:current_user] do
+      current_user = socket.assigns.current_user
+      onboarding_complete = onboarding_complete?(current_user)
+
+      cond do
+        not onboarding_complete ->
+          {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/onboarding")}
+
+        admin?(current_user) ->
+          {:cont, socket}
+
+        true ->
+          {:halt,
+           socket
+           |> Phoenix.LiveView.put_flash(:error, "Only managers can access reports")
+           |> Phoenix.LiveView.redirect(to: ~p"/dash")}
+      end
+    else
+      {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/sign-in")}
+    end
+  end
+
   def on_mount(:live_no_user, _params, _session, socket) do
     if socket.assigns[:current_user] do
       {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/")}
@@ -54,8 +77,30 @@ defmodule GoodsWeb.LiveUserAuth do
   end
 
   defp onboarding_complete?(current_user) do
-    Goods.Accounts.BusinessProfile
-    |> Ash.Query.filter(user_id == ^current_user.id)
-    |> Ash.exists?(actor: current_user)
+    case normalize_company_key(current_user.company_key) do
+      nil ->
+        false
+
+      tenant ->
+        Goods.Accounts.BusinessProfile
+        |> Ash.Query.filter(user_id == ^current_user.id)
+        |> Ash.exists?(actor: current_user, tenant: tenant)
+    end
   end
+
+  defp normalize_company_key(nil), do: nil
+
+  defp normalize_company_key(company_key) do
+    company_key
+    |> to_string()
+    |> String.trim()
+    |> String.downcase()
+    |> case do
+      "" -> nil
+      normalized -> normalized
+    end
+  end
+
+  defp admin?(%{role: :admin}), do: true
+  defp admin?(_), do: false
 end

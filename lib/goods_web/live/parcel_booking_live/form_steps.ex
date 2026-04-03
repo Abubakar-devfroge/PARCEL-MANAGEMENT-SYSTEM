@@ -88,9 +88,14 @@ defmodule GoodsWeb.ParcelBookingLive.FormSteps do
     path
     |> Enum.reverse()
     |> Enum.find_value(fn
-      field when is_atom(field) and field not in [:arguments, :attributes] -> Atom.to_string(field)
-      field when is_binary(field) and field not in ["arguments", "attributes"] -> field
-      _ -> nil
+      field when is_atom(field) and field not in [:arguments, :attributes] ->
+        Atom.to_string(field)
+
+      field when is_binary(field) and field not in ["arguments", "attributes"] ->
+        field
+
+      _ ->
+        nil
     end)
   end
 
@@ -121,7 +126,8 @@ defmodule GoodsWeb.ParcelBookingLive.FormSteps do
 
   defp existing_form_params(_), do: %{}
 
-  defp form_field_atom(field_name) when is_binary(field_name), do: String.to_existing_atom(field_name)
+  defp form_field_atom(field_name) when is_binary(field_name),
+    do: String.to_existing_atom(field_name)
 
   defp field_value(form, field_atom) do
     case form[field_atom] do

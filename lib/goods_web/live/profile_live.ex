@@ -164,9 +164,28 @@ defmodule GoodsWeb.ProfileLive do
   end
 
   defp get_business_profile(current_user) do
-    Goods.Accounts.BusinessProfile
-    |> Ash.Query.filter(user_id == ^current_user.id)
-    |> Ash.read_one!(actor: current_user)
+    case normalize_company_key(current_user.company_key) do
+      nil ->
+        nil
+
+      tenant ->
+        Goods.Accounts.BusinessProfile
+        |> Ash.Query.filter(user_id == ^current_user.id)
+        |> Ash.read_one!(actor: current_user, tenant: tenant)
+    end
+  end
+
+  defp normalize_company_key(nil), do: nil
+
+  defp normalize_company_key(value) do
+    value
+    |> to_string()
+    |> String.trim()
+    |> String.downcase()
+    |> case do
+      "" -> nil
+      normalized -> normalized
+    end
   end
 
   defp profile_value(nil, _field), do: "Not Available"

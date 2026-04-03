@@ -11,12 +11,22 @@ defmodule GoodsWeb.ParcelBookingLive.Form do
   @impl true
   def mount(params, _session, socket) do
     socket = assign_new(socket, :current_user, fn -> nil end)
-    routing_setup = FormRouting.build_routing_setup(FormRouting.get_business_profile(socket.assigns.current_user))
+
+    routing_setup =
+      FormRouting.build_routing_setup(
+        FormRouting.get_business_profile(socket.assigns.current_user)
+      )
 
     parcel_booking =
       case params["id"] do
-        nil -> nil
-        id -> Ash.get!(Logistics.ParcelBooking, id, actor: socket.assigns.current_user)
+        nil ->
+          nil
+
+        id ->
+          Ash.get!(Logistics.ParcelBooking, id,
+            actor: socket.assigns.current_user,
+            tenant: socket.assigns.current_user.company_key
+          )
       end
 
     action = if is_nil(parcel_booking), do: "New", else: "Edit"
@@ -50,7 +60,8 @@ defmodule GoodsWeb.ParcelBookingLive.Form do
 
   @impl true
   def handle_event("validate", %{"parcel_booking" => parcel_booking_params}, socket) do
-    merged_params = FormSteps.merge_with_existing_params(socket.assigns.form, parcel_booking_params)
+    merged_params =
+      FormSteps.merge_with_existing_params(socket.assigns.form, parcel_booking_params)
 
     normalized_params =
       FormRouting.normalize_booking_params(merged_params, socket.assigns.routing_setup)
@@ -73,7 +84,8 @@ defmodule GoodsWeb.ParcelBookingLive.Form do
 
   @impl true
   def handle_event("save", %{"parcel_booking" => parcel_booking_params}, socket) do
-    merged_params = FormSteps.merge_with_existing_params(socket.assigns.form, parcel_booking_params)
+    merged_params =
+      FormSteps.merge_with_existing_params(socket.assigns.form, parcel_booking_params)
 
     normalized_params =
       FormRouting.normalize_booking_params(merged_params, socket.assigns.routing_setup)
@@ -92,7 +104,8 @@ defmodule GoodsWeb.ParcelBookingLive.Form do
         {:noreply, socket}
 
       {:error, form} ->
-        error_step = FormSteps.step_for_first_error(form, socket.assigns.current_step, normalized_params)
+        error_step =
+          FormSteps.step_for_first_error(form, socket.assigns.current_step, normalized_params)
 
         {:noreply,
          socket
@@ -115,12 +128,14 @@ defmodule GoodsWeb.ParcelBookingLive.Form do
       if parcel_booking do
         AshPhoenix.Form.for_update(parcel_booking, :update,
           as: "parcel_booking",
-          actor: socket.assigns.current_user
+          actor: socket.assigns.current_user,
+          tenant: socket.assigns.current_user.company_key
         )
       else
         AshPhoenix.Form.for_create(Logistics.ParcelBooking, :create,
           as: "parcel_booking",
-          actor: socket.assigns.current_user
+          actor: socket.assigns.current_user,
+          tenant: socket.assigns.current_user.company_key
         )
       end
 

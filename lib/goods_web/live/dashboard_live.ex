@@ -22,7 +22,12 @@ defmodule GoodsWeb.DashboardLive do
   end
 
   defp load_dashboard_data(socket) do
-    parcel_bookings = Ash.read!(Logistics.ParcelBooking, actor: socket.assigns.current_user)
+    parcel_bookings =
+      Ash.read!(Logistics.ParcelBooking,
+        actor: socket.assigns.current_user,
+        tenant: socket.assigns.current_user.company_key
+      )
+
     today = Date.utc_today()
 
     booked_today_count =
@@ -53,9 +58,15 @@ defmodule GoodsWeb.DashboardLive do
 
   defp get_company_name(current_user) do
     profile =
-      Goods.Accounts.BusinessProfile
-      |> Ash.Query.filter(user_id == ^current_user.id)
-      |> Ash.read_one(actor: current_user)
+      case normalize_company_key(current_user.company_key) do
+        nil ->
+          {:ok, nil}
+
+        tenant ->
+          Goods.Accounts.BusinessProfile
+          |> Ash.Query.filter(user_id == ^current_user.id)
+          |> Ash.read_one(actor: current_user, tenant: tenant)
+      end
 
     case profile do
       {:ok, %{company_name: company_name}} when is_binary(company_name) ->
@@ -69,6 +80,19 @@ defmodule GoodsWeb.DashboardLive do
 
       _ ->
         current_user.email
+    end
+  end
+
+  defp normalize_company_key(nil), do: nil
+
+  defp normalize_company_key(value) do
+    value
+    |> to_string()
+    |> String.trim()
+    |> String.downcase()
+    |> case do
+      "" -> nil
+      normalized -> normalized
     end
   end
 end

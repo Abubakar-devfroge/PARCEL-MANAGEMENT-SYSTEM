@@ -4,12 +4,18 @@ defmodule GoodsWeb.ParcelBookingLive.FormRouting do
   def get_business_profile(nil), do: nil
 
   def get_business_profile(current_user) do
-    Goods.Accounts.BusinessProfile
-    |> Ash.Query.filter(user_id == ^current_user.id)
-    |> Ash.read_one(actor: current_user)
-    |> case do
-      {:ok, profile} -> profile
-      {:error, _error} -> nil
+    case normalize_company_key(current_user.company_key) do
+      nil ->
+        nil
+
+      tenant ->
+        Goods.Accounts.BusinessProfile
+        |> Ash.Query.filter(user_id == ^current_user.id)
+        |> Ash.read_one(actor: current_user, tenant: tenant)
+        |> case do
+          {:ok, profile} -> profile
+          {:error, _error} -> nil
+        end
     end
   end
 
@@ -198,6 +204,19 @@ defmodule GoodsWeb.ParcelBookingLive.FormRouting do
 
   defp normalize_string(nil), do: ""
   defp normalize_string(value), do: value |> to_string() |> String.trim()
+
+  defp normalize_company_key(nil), do: nil
+
+  defp normalize_company_key(value) do
+    value
+    |> to_string()
+    |> String.trim()
+    |> String.downcase()
+    |> case do
+      "" -> nil
+      normalized -> normalized
+    end
+  end
 
   defp value_or_nil(nil, _field), do: nil
 

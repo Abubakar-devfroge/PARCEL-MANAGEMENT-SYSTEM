@@ -31,6 +31,7 @@ defmodule Goods.Accounts.BusinessProfile do
       ]
 
       change set_attribute(:user_id, actor(:id))
+      change Goods.Accounts.BusinessProfile.Changes.AssignCompanyBootstrapAdmin
     end
 
     update :update do
@@ -62,8 +63,18 @@ defmodule Goods.Accounts.BusinessProfile do
     end
   end
 
+  multitenancy do
+    strategy :attribute
+    attribute :company_key
+  end
+
   attributes do
     uuid_primary_key :id
+
+    attribute :company_key, :string do
+      allow_nil? false
+      public? false
+    end
 
     attribute :company_name, :string do
       allow_nil? false

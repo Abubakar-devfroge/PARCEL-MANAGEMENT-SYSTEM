@@ -10,11 +10,19 @@
 
       <div class="after:mt-4 after:block after:h-1 after:w-full after:rounded-lg after:bg-gray-200">
         <ol class="grid grid-cols-3 text-sm font-medium text-gray-600">
-
           <li class="relative flex justify-start text-amber-600">
             <span class="absolute start-0 -bottom-7 rounded-full bg-amber-600 text-white">
-              <svg class="size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+              <svg
+                class="size-5"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clip-rule="evenodd"
+                />
               </svg>
             </span>
             <span class="hidden sm:block"> Details </span>
@@ -29,12 +37,26 @@
               if(@current_step >= 2, do: "bg-amber-600", else: "bg-gray-500")
             ]}>
               <%= if @current_step >= 2 do %>
-                <svg class="size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                <svg
+                  class="size-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd"
+                  />
                 </svg>
               <% else %>
-                <svg class="size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16z"/>
+                <svg
+                  class="size-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16z" />
                 </svg>
               <% end %>
             </span>
@@ -49,13 +71,17 @@
               "absolute end-0 -bottom-7 rounded-full text-white",
               if(@current_step == 3, do: "bg-amber-600", else: "bg-gray-500")
             ]}>
-              <svg class="size-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16z"/>
+              <svg
+                class="size-5"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16z" />
               </svg>
             </span>
             <span class="hidden sm:block"> Payment </span>
           </li>
-
         </ol>
       </div>
     </div>
@@ -66,30 +92,58 @@
       phx-change="validate"
       phx-submit="save"
     >
-
-      <!-- STEP 1 -->
-<div class={if @current_step == 1, do: "mb-6", else: "hidden mb-6"}>
+      
+<!-- STEP 1 -->
+      <div class={if @current_step == 1, do: "mb-6", else: "hidden mb-6"}>
         <div class="px-4 py-2 space-y-4">
-          <.input field={@form[:sender_name]} type="text" label="Sender Name" minlength="3" maxlength="15" required />
+          <.input
+            field={@form[:sender_name]}
+            type="text"
+            label="Sender Name"
+            minlength="3"
+            maxlength="15"
+            required
+          />
           <.input field={@form[:sender_id]} type="text" label="Sender ID" required />
           <.input field={@form[:sender_phone]} type="text" label="Sender Phone" required />
 
-          <.input field={@form[:receiver_name]} type="text" label="Receiver Name" minlength="3" maxlength="15" required />
+          <.input
+            field={@form[:receiver_name]}
+            type="text"
+            label="Receiver Name"
+            minlength="3"
+            maxlength="15"
+            required
+          />
           <.input field={@form[:receiver_id]} type="text" label="Receiver ID" />
           <.input field={@form[:receiver_phone]} type="text" label="Receiver Phone" required />
         </div>
       </div>
-
-      <!-- STEP 2 -->
-<div class={if @current_step == 2, do: "mb-6", else: "hidden mb-6"}>
+      
+<!-- STEP 2 -->
+      <div class={if @current_step == 2, do: "mb-6", else: "hidden mb-6"}>
         <div class="px-4 py-2 space-y-4">
-          <.input field={@form[:origin_office_id]} type="select" label="Origin Office" options={@origin_options} prompt="Select origin office" required />
-          <.input field={@form[:destination_office_id]} type="select" label="Destination Office" options={@destination_options} prompt="Select destination office" required />
+          <.input
+            field={@form[:origin_office_id]}
+            type="select"
+            label="Origin Office"
+            options={@origin_options}
+            prompt="Select origin office"
+            required
+          />
+          <.input
+            field={@form[:destination_office_id]}
+            type="select"
+            label="Destination Office"
+            options={@destination_options}
+            prompt="Select destination office"
+            required
+          />
         </div>
       </div>
-
-      <!-- STEP 3 -->
-<div class={if @current_step == 3, do: "mb-6", else: "hidden mb-6"}>
+      
+<!-- STEP 3 -->
+      <div class={if @current_step == 3, do: "mb-6", else: "hidden mb-6"}>
         <div class="px-4 py-2 space-y-4">
           <.input field={@form[:parcel_type]} type="text" label="Parcel Type" required />
           <.input field={@form[:quantity]} type="number" label="Quantity" min="1" required />
@@ -99,11 +153,11 @@
 
       <.input field={@form[:route_id]} type="hidden" />
       <.input field={@form[:destination]} type="hidden" />
-
-      <!-- Buttons -->
+      
+<!-- Buttons -->
       <div class="mt-6 flex items-center justify-between gap-3">
-
-        <!-- Left -->
+        
+<!-- Left -->
         <div class="flex gap-3">
           <.button :if={@current_step > 1} type="button" phx-click="prev_step">
             Back
@@ -113,8 +167,8 @@
             Cancel
           </.button>
         </div>
-
-        <!-- Right -->
+        
+<!-- Right -->
         <div>
           <.button
             :if={@current_step < 3}
@@ -133,7 +187,6 @@
             Book Parcel
           </.button>
         </div>
-
       </div>
     </.form>
   </div>

@@ -6,28 +6,35 @@ defmodule GoodsWeb.ParcelReportLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    if connected?(socket) do
-      Process.send_after(self(), :refresh_reports, @refresh_interval)
+    if admin?(socket.assigns[:current_user]) do
+      if connected?(socket) do
+        Process.send_after(self(), :refresh_reports, @refresh_interval)
+      end
+
+      filters = default_filters()
+      parcel_bookings = list_parcel_bookings(socket)
+      filtered_bookings = apply_filters(parcel_bookings, filters)
+      report_data = build_report_data(filtered_bookings)
+
+      {:ok,
+       socket
+       |> assign(:page_title, "Parcel Management Reports")
+       |> assign(:active_tab, "summary")
+       |> assign(:filters, filters)
+       |> assign(:all_bookings_count, length(parcel_bookings))
+       |> assign(:filtered_bookings_count, length(filtered_bookings))
+       |> assign(:filtered_bookings, filtered_bookings)
+       |> assign(:report_data, report_data)
+       |> assign(:chart_payload, build_chart_payload(report_data, filtered_bookings))
+       |> assign(:alerts, build_alerts(report_data, filtered_bookings))
+       |> assign(:last_updated_at, DateTime.utc_now())
+       |> stream(:custom_rows, filtered_bookings)}
+    else
+      {:ok,
+       socket
+       |> put_flash(:error, "Only admins can access reports")
+       |> redirect(to: ~p"/dash")}
     end
-
-    filters = default_filters()
-    parcel_bookings = list_parcel_bookings(socket)
-    filtered_bookings = apply_filters(parcel_bookings, filters)
-    report_data = build_report_data(filtered_bookings)
-
-    {:ok,
-     socket
-     |> assign(:page_title, "Parcel Management Reports")
-     |> assign(:active_tab, "summary")
-     |> assign(:filters, filters)
-     |> assign(:all_bookings_count, length(parcel_bookings))
-     |> assign(:filtered_bookings_count, length(filtered_bookings))
-     |> assign(:filtered_bookings, filtered_bookings)
-     |> assign(:report_data, report_data)
-     |> assign(:chart_payload, build_chart_payload(report_data, filtered_bookings))
-     |> assign(:alerts, build_alerts(report_data, filtered_bookings))
-     |> assign(:last_updated_at, DateTime.utc_now())
-     |> stream(:custom_rows, filtered_bookings)}
   end
 
   @impl true
@@ -100,7 +107,10 @@ defmodule GoodsWeb.ParcelReportLive do
   defp normalize_text(value), do: value |> to_string() |> String.trim()
 
   defp list_parcel_bookings(socket) do
-    Ash.read!(Logistics.ParcelBooking, actor: socket.assigns.current_user)
+    Ash.read!(Logistics.ParcelBooking,
+      actor: socket.assigns.current_user,
+      tenant: socket.assigns.current_user.company_key
+    )
     |> Enum.sort_by(& &1.inserted_at, {:desc, DateTime})
   end
 
@@ -410,4 +420,7 @@ defmodule GoodsWeb.ParcelReportLive do
       )
     ]
   end
+
+  defp admin?(%{role: :admin}), do: true
+  defp admin?(_), do: false
 end

@@ -48,7 +48,10 @@ defmodule GoodsWeb.ParcelBookingLive.Show do
      |> assign(:page_title, "Show Parcel booking")
      |> assign(
        :parcel_booking,
-       Ash.get!(Logistics.ParcelBooking, id, actor: socket.assigns.current_user)
+       Ash.get!(Logistics.ParcelBooking, id,
+         actor: socket.assigns.current_user,
+         tenant: socket.assigns.current_user.company_key
+       )
      )}
   end
 

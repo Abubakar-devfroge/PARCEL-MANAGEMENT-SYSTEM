@@ -167,6 +167,25 @@
               </tbody>
             </table>
           </div>
+
+          <div class="border-t border-gray-200 bg-gray-50 px-4 py-3 sm:px-6">
+            <div
+              id="parcel-bookings-sentinel"
+              phx-hook="InfiniteParcels"
+              data-has-more={to_string(@has_more?)}
+              data-loading={to_string(@loading_more?)}
+              class="h-2"
+            >
+            </div>
+
+            <p :if={@loading_more?} class="text-xs font-medium text-gray-600">
+              Loading more parcels...
+            </p>
+
+            <p :if={!@has_more?} class="text-xs font-medium text-gray-500">
+              You have reached the end of the parcel list.
+            </p>
+          </div>
         <% end %>
       </div>
     <% end %>

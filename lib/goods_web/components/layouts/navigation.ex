@@ -55,13 +55,13 @@ defmodule GoodsWeb.Navigation do
                 </.link>
 
                 <.link
-                  navigate={~p"/parcel_bookings/new"}
+                  navigate={~p"/employees"}
                   class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
                 >
                   <.icon
-                    name="hero-plus-circle"
+                    name="hero-users"
                     class="h-6 w-6 text-white/90 transition-colors group-hover:text-white"
-                  /> <span class="desktop-sidebar-label">New Parcel</span>
+                  /> <span class="desktop-sidebar-label">Employees</span>
                 </.link>
 
                 <.link
@@ -69,13 +69,23 @@ defmodule GoodsWeb.Navigation do
                   class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
                 >
                   <.icon
-                    name="hero-cog-6-tooth"
+                    name="hero-document-text"
                     class="h-6 w-6 text-white/90 transition-colors group-hover:text-white"
                   /> <span class="desktop-sidebar-label">Reports</span>
                 </.link>
               </nav>
 
               <div class="mt-auto border-t border-white/20 pt-4">
+                <.link
+                  navigate={~p"/parcel_reports"}
+                  class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
+                >
+                  <.icon
+                    name="hero-clock"
+                    class="h-6 w-6 text-white/90 transition-colors group-hover:text-white"
+                  /> <span class="desktop-sidebar-label">Activity logs</span>
+                </.link>
+
                 <.link
                   href={~p"/sign-out"}
                   class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
@@ -256,6 +266,12 @@ defmodule GoodsWeb.Navigation do
                 class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white hover:bg-white/10"
               >
                 <.icon name="hero-archive-box" class="h-6 w-6 text-white/90" /> Parcels
+              </.link>
+              <.link
+                navigate={~p"/employees"}
+                class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white hover:bg-white/10"
+              >
+                <.icon name="hero-users" class="h-6 w-6 text-white/90" /> Employees
               </.link>
               <.link
                 navigate={~p"/profile"}

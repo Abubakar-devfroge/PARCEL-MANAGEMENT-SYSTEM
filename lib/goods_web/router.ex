@@ -25,10 +25,12 @@ defmodule GoodsWeb.Router do
     plug(:require_authenticated_user)
   end
 
+  pipeline :admin_browser do
+    plug(:require_admin_user)
+  end
+
   scope "/", GoodsWeb do
     pipe_through([:browser, :authenticated_browser])
-
-    get("/parcel_reports/export", ParcelReportExportController, :export)
 
     ash_authentication_live_session :authenticated_routes,
       on_mount: [{GoodsWeb.LiveUserAuth, :live_user_required}] do
@@ -49,8 +51,13 @@ defmodule GoodsWeb.Router do
       live("/parcel_bookings/:id/edit", ParcelBookingLive.Form, :edit)
       live("/parcel_bookings/:id", ParcelBookingLive.Show, :show)
       live("/parcel_bookings/:id/show/edit", ParcelBookingLive.Show, :edit)
-      live("/parcel_reports", ParcelReportLive, :index)
+      live("/employees", EmployeeLive, :index)
       live("/profile", ProfileLive, :index)
+    end
+
+    ash_authentication_live_session :admin_routes,
+      on_mount: [{GoodsWeb.LiveUserAuth, :live_admin_required}] do
+      live("/parcel_reports", ParcelReportLive, :index)
     end
 
     ash_authentication_live_session :onboarding_routes,
@@ -61,9 +68,16 @@ defmodule GoodsWeb.Router do
   end
 
   scope "/", GoodsWeb do
+    pipe_through([:browser, :authenticated_browser, :admin_browser])
+
+    get("/parcel_reports/export", ParcelReportExportController, :export)
+  end
+
+  scope "/", GoodsWeb do
     pipe_through(:browser)
 
     get("/", PageController, :home)
+    live("/set-password", SetPasswordLive, :index)
     auth_routes(AuthController, Goods.Accounts.User, path: "/auth")
     sign_out_route(AuthController)
 
@@ -141,6 +155,19 @@ defmodule GoodsWeb.Router do
       |> Phoenix.Controller.put_flash(:error, "You must sign in to access this page.")
       |> Phoenix.Controller.redirect(to: "/sign-in")
       |> Plug.Conn.halt()
+    end
+  end
+
+  defp require_admin_user(conn, _opts) do
+    case conn.assigns[:current_user] do
+      %{role: :admin} ->
+        conn
+
+      _ ->
+        conn
+        |> Phoenix.Controller.put_flash(:error, "Only admins can access reports")
+        |> Phoenix.Controller.redirect(to: "/dash")
+        |> Plug.Conn.halt()
     end
   end
 end

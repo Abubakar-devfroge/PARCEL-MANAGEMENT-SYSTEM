@@ -65,6 +65,11 @@ config :goods, Logistics.Notifications.ParcelBookingSMS,
 
 config :goods, :super_admin_email, System.get_env("SUPER_ADMIN_EMAIL") || "Abubakar@craftinc.dev"
 
+config :goods, :employee_invites,
+  resend_api_key: System.get_env("RESEND_API_KEY"),
+  resend_from_email: System.get_env("RESEND_FROM_EMAIL") || "BUSCAR <no-reply@buscar.app>",
+  app_base_url: System.get_env("APP_BASE_URL") || "http://localhost:4000"
+
 # 4. PRODUCTION SPECIFIC CONFIG
 if config_env() == :prod do
   database_url =

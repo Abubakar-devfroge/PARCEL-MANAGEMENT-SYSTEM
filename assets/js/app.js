@@ -213,11 +213,63 @@ const EnterpriseReportCharts = {
   }
 }
 
+const InfiniteParcels = {
+  mounted() {
+    this.loading = false
+
+    this.observer = new IntersectionObserver(entries => {
+      const shouldLoad = entries.some(entry => entry.isIntersecting)
+
+      if (shouldLoad) {
+        this.maybeLoadMore()
+      }
+    }, {
+      root: null,
+      rootMargin: "0px 0px 280px 0px",
+      threshold: 0.01,
+    })
+
+    this.observer.observe(this.el)
+  },
+
+  updated() {
+    const loadingOnServer = this.el.dataset.loading === "true"
+
+    if (!loadingOnServer) {
+      this.loading = false
+    }
+
+    if (this.el.dataset.hasMore !== "true" && this.observer) {
+      this.observer.disconnect()
+      this.observer = null
+    }
+  },
+
+  destroyed() {
+    if (this.observer) {
+      this.observer.disconnect()
+      this.observer = null
+    }
+  },
+
+  maybeLoadMore() {
+    const hasMore = this.el.dataset.hasMore === "true"
+    const loadingOnServer = this.el.dataset.loading === "true"
+
+    if (!hasMore || loadingOnServer || this.loading) {
+      return
+    }
+
+    this.loading = true
+    this.pushEvent("load-more", {})
+  },
+}
+
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs:  false,
   params: {_csrf_token: csrfToken},
-  hooks: {...colocatedHooks, EnterpriseReportCharts},
+  hooks: {...colocatedHooks, EnterpriseReportCharts, InfiniteParcels},
 })
 
 // Show progress bar on live navigation and form submits

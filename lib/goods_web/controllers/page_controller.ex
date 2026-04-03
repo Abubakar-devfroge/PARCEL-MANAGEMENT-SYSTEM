@@ -8,7 +8,12 @@ defmodule GoodsWeb.PageController do
   def dash(conn, _params) do
     current_user = conn.assigns[:current_user]
 
-    parcel_bookings = Ash.read!(Logistics.ParcelBooking, actor: current_user)
+    parcel_bookings =
+      Ash.read!(Logistics.ParcelBooking,
+        actor: current_user,
+        tenant: current_user.company_key
+      )
+
     total_count = length(parcel_bookings)
 
     recent_parcel_bookings =

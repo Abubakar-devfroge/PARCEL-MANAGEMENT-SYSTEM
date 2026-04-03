@@ -2,7 +2,8 @@ defmodule Logistics.ParcelBooking do
   use Ash.Resource,
     otp_app: :goods,
     domain: Logistics,
-    data_layer: AshPostgres.DataLayer
+    data_layer: AshPostgres.DataLayer,
+    authorizers: [Ash.Policy.Authorizer]
 
   postgres do
     table "parcel_bookings"
@@ -10,7 +11,18 @@ defmodule Logistics.ParcelBooking do
   end
 
   actions do
-    defaults [:read, :destroy]
+    defaults [:destroy]
+
+    read :read do
+      primary? true
+
+      pagination keyset?: true,
+                 offset?: true,
+                 required?: false,
+                 default_limit: 40,
+                 max_page_size: 100,
+                 countable: true
+    end
 
     create :create do
       primary? true
@@ -54,6 +66,16 @@ defmodule Logistics.ParcelBooking do
     end
   end
 
+  policies do
+    policy action(:create) do
+      authorize_if expr(not is_nil(^actor(:id)) and not is_nil(^actor(:company_key)))
+    end
+
+    policy action_type([:read, :update, :destroy]) do
+      authorize_if expr(not is_nil(^actor(:company_key)) and company_key == ^actor(:company_key))
+    end
+  end
+
   validations do
     validate string_length(:sender_name, min: 3),
       message: "Sender name is too short. Use at least 3 letters."
@@ -68,11 +90,17 @@ defmodule Logistics.ParcelBooking do
       message: "Receiver name is too long. Use 15 letters or less."
   end
 
+  multitenancy do
+    strategy :attribute
+    attribute :company_key
+  end
+
   attributes do
     uuid_primary_key :id, generated?: true
     create_timestamp :inserted_at
     update_timestamp :updated_at
     attribute :parcel_number, :string
+    attribute :company_key, :string
 
     attribute :sender_name, :string do
       allow_nil? false

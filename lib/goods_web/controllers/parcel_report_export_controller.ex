@@ -2,48 +2,60 @@ defmodule GoodsWeb.ParcelReportExportController do
   use GoodsWeb, :controller
 
   def export(conn, params) do
-    report = Map.get(params, "report", "custom")
-    format = Map.get(params, "format", "csv")
-    filters = normalize_filters(Map.get(params, "filters", %{}))
+    if admin?(conn.assigns[:current_user]) do
+      report = Map.get(params, "report", "custom")
+      format = Map.get(params, "format", "csv")
+      filters = normalize_filters(Map.get(params, "filters", %{}))
 
-    parcel_bookings =
-      Ash.read!(Logistics.ParcelBooking, actor: conn.assigns[:current_user])
-      |> Enum.sort_by(& &1.inserted_at, {:desc, DateTime})
+      parcel_bookings =
+        Ash.read!(Logistics.ParcelBooking,
+          actor: conn.assigns[:current_user],
+          tenant: conn.assigns[:current_user].company_key
+        )
+        |> Enum.sort_by(& &1.inserted_at, {:desc, DateTime})
 
-    filtered_bookings = apply_filters(parcel_bookings, filters)
-    report_data = build_report_data(filtered_bookings)
+      filtered_bookings = apply_filters(parcel_bookings, filters)
+      report_data = build_report_data(filtered_bookings)
 
-    {headers, rows} =
-      export_rows(report, %{filtered_bookings: filtered_bookings, report_data: report_data})
+      {headers, rows} =
+        export_rows(report, %{filtered_bookings: filtered_bookings, report_data: report_data})
 
-    case {headers, rows} do
-      {[], []} ->
-        conn
-        |> put_flash(:error, "No data available for export")
-        |> redirect(to: ~p"/parcel_reports")
+      case {headers, rows} do
+        {[], []} ->
+          conn
+          |> put_flash(:error, "No data available for export")
+          |> redirect(to: ~p"/parcel_reports")
 
-      _ ->
-        delimiter = if format == "excel", do: "\t", else: ","
-        extension = if format == "excel", do: "xls", else: "csv"
+        _ ->
+          delimiter = if format == "excel", do: "\t", else: ","
+          extension = if format == "excel", do: "xls", else: "csv"
 
-        content = delimited_content(headers, rows, delimiter)
+          content = delimited_content(headers, rows, delimiter)
 
-        filename =
-          ["parcel_reports", report, Date.utc_today() |> Date.to_iso8601()]
-          |> Enum.join("_")
-          |> Kernel.<>("." <> extension)
+          filename =
+            ["parcel_reports", report, Date.utc_today() |> Date.to_iso8601()]
+            |> Enum.join("_")
+            |> Kernel.<>("." <> extension)
 
-        content_type =
-          if format == "excel",
-            do: "application/vnd.ms-excel; charset=utf-8",
-            else: "text/csv; charset=utf-8"
+          content_type =
+            if format == "excel",
+              do: "application/vnd.ms-excel; charset=utf-8",
+              else: "text/csv; charset=utf-8"
 
-        conn
-        |> put_resp_content_type(content_type)
-        |> put_resp_header("content-disposition", "attachment; filename=#{filename}")
-        |> send_resp(200, content)
+          conn
+          |> put_resp_content_type(content_type)
+          |> put_resp_header("content-disposition", "attachment; filename=#{filename}")
+          |> send_resp(200, content)
+      end
+    else
+      conn
+      |> put_flash(:error, "Only admins can access reports")
+      |> redirect(to: ~p"/dash")
     end
   end
+
+  defp admin?(%{role: :admin}), do: true
+  defp admin?(_), do: false
 
   defp normalize_filters(params) do
     %{

@@ -19,8 +19,10 @@ defmodule GoodsWeb.OnboardingLive do
   def handle_event("validate", %{"business_profile" => params} = event_params, socket) do
     target = Map.get(event_params, "_target", [])
 
+    form = ensure_form_tenant(socket.assigns.form, socket.assigns.current_user, params)
+
     form =
-      AshPhoenix.Form.validate(socket.assigns.form, params,
+      AshPhoenix.Form.validate(form, params,
         errors: false,
         only_touched?: true,
         target: target
@@ -31,7 +33,10 @@ defmodule GoodsWeb.OnboardingLive do
 
   @impl true
   def handle_event("save", %{"business_profile" => params}, socket) do
-    case AshPhoenix.Form.submit(socket.assigns.form, params: normalize_routing_params(params)) do
+    normalized_params = normalize_routing_params(params)
+    form = ensure_form_tenant(socket.assigns.form, socket.assigns.current_user, normalized_params)
+
+    case AshPhoenix.Form.submit(form, params: normalized_params) do
       {:ok, profile} ->
         {:noreply,
          socket
@@ -63,29 +68,92 @@ defmodule GoodsWeb.OnboardingLive do
   end
 
   defp assign_form(socket, nil) do
-    form =
-      AshPhoenix.Form.for_create(Goods.Accounts.BusinessProfile, :create,
-        as: "business_profile",
-        actor: socket.assigns.current_user
-      )
+    form = build_create_form(socket.assigns.current_user, %{})
 
     assign(socket, :form, to_form(form))
   end
 
   defp assign_form(socket, profile) do
-    form =
-      AshPhoenix.Form.for_update(profile, :update,
-        as: "business_profile",
-        actor: socket.assigns.current_user
-      )
+    form = build_update_form(profile, socket.assigns.current_user)
 
     assign(socket, :form, to_form(form))
   end
 
   defp get_business_profile(current_user) do
-    Goods.Accounts.BusinessProfile
-    |> Ash.Query.filter(user_id == ^current_user.id)
-    |> Ash.read_one!(actor: current_user)
+    case current_company_tenant(current_user) do
+      nil ->
+        nil
+
+      tenant ->
+        Goods.Accounts.BusinessProfile
+        |> Ash.Query.filter(user_id == ^current_user.id)
+        |> Ash.read_one!(actor: current_user, tenant: tenant)
+    end
+  end
+
+  defp ensure_form_tenant(form, current_user, params) do
+    tenant = derived_company_tenant(current_user, params)
+    current_tenant = form.source.opts[:tenant]
+
+    cond do
+      form.source.type != :create ->
+        form
+
+      tenant == current_tenant ->
+        form
+
+      true ->
+        build_create_form(current_user, params)
+        |> to_form()
+    end
+  end
+
+  defp build_create_form(current_user, params) do
+    opts = [as: "business_profile", actor: current_user]
+
+    case derived_company_tenant(current_user, params) do
+      nil ->
+        AshPhoenix.Form.for_create(Goods.Accounts.BusinessProfile, :create, opts)
+
+      tenant ->
+        AshPhoenix.Form.for_create(
+          Goods.Accounts.BusinessProfile,
+          :create,
+          opts ++ [tenant: tenant]
+        )
+    end
+  end
+
+  defp build_update_form(profile, current_user) do
+    opts = [as: "business_profile", actor: current_user]
+
+    case current_company_tenant(current_user) || normalize_company_key(profile.company_key) do
+      nil -> AshPhoenix.Form.for_update(profile, :update, opts)
+      tenant -> AshPhoenix.Form.for_update(profile, :update, opts ++ [tenant: tenant])
+    end
+  end
+
+  defp derived_company_tenant(current_user, params) do
+    current_company_tenant(current_user) || normalize_company_key(Map.get(params, "company_name"))
+  end
+
+  defp current_company_tenant(nil), do: nil
+
+  defp current_company_tenant(current_user) do
+    normalize_company_key(current_user.company_key)
+  end
+
+  defp normalize_company_key(nil), do: nil
+
+  defp normalize_company_key(value) do
+    value
+    |> to_string()
+    |> String.trim()
+    |> String.downcase()
+    |> case do
+      "" -> nil
+      normalized -> normalized
+    end
   end
 
   defp normalize_routing_params(params) do
