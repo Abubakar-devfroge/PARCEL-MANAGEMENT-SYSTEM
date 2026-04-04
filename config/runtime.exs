@@ -76,26 +76,16 @@ if config_env() == :prod do
     System.get_env("DATABASE_URL") ||
       raise "environment variable DATABASE_URL is missing."
 
-  maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
-
-  config :goods, Goods.Repo,
-    url: database_url,
-    # Updated syntax to remove the warning
-    ssl: [verify: :verify_none],
-    pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
-    socket_options: maybe_ipv6
-
   secret_key_base =
     System.get_env("SECRET_KEY_BASE") ||
       raise "environment variable SECRET_KEY_BASE is missing. Use `mix phx.gen.secret`"
 
   host = System.get_env("PHX_HOST") || "localhost"
-  # Standard for DO
   url_scheme = System.get_env("PHX_URL_SCHEME") || "https"
   url_port = String.to_integer(System.get_env("PHX_URL_PORT") || "443")
+  maybe_ipv6 = if System.get_env("ECTO_IPV6") in ~w(true 1), do: [:inet6], else: []
 
-  # runtime.exs  (prod section)
-
+  # Cleaned up Repo Config (Merged)
   config :goods, Goods.Repo,
     url: database_url,
     ssl: true,
@@ -103,8 +93,11 @@ if config_env() == :prod do
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
     socket_options: maybe_ipv6
 
+  # Endpoint Config with FORCE_SSL for secure cookies
   config :goods, GoodsWeb.Endpoint,
     url: [host: host, port: url_port, scheme: url_scheme],
+    # IMPORTANT: This allows cookies to work across DigitalOcean's load balancer
+    force_ssl: [rewrite_on: [:x_forwarded_proto]],
     http: [
       ip: {0, 0, 0, 0},
       port: port
@@ -120,9 +113,7 @@ if config_env() == :prod do
       System.get_env("TOKEN_SIGNING_SECRET") ||
         raise("Missing TOKEN_SIGNING_SECRET")
 else
-  # Optional: Explicitly disable SSL for non-prod if your local DB doesn't use it
+  # Local Development
   config :goods, Goods.Repo, ssl: false
-
-  # Default endpoint config for dev/test
   config :goods, GoodsWeb.Endpoint, http: [port: port]
 end
