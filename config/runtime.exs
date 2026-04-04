@@ -88,8 +88,7 @@ if config_env() == :prod do
   # Cleaned up Repo Config (Merged)
   config :goods, Goods.Repo,
     url: database_url,
-    ssl: true,
-    ssl_opts: [verify: :verify_none],
+   ssl: [verify: :verify_none],
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
     socket_options: maybe_ipv6
 
