@@ -1,9 +1,9 @@
 # ────────────────────────────────────────────────────────────────────────────────
 # 1️⃣  Builder image
 # ────────────────────────────────────────────────────────────────────────────────
-ARG ELIXIR_VERSION=1.18
-ARG OTP_VERSION=26.2.3
-ARG DEBIAN_VERSION=bookworm-20240130-slim
+ARG ELIXIR_VERSION=1.18.2
+ARG OTP_VERSION=27.2.1
+ARG DEBIAN_VERSION=bookworm-20250203-slim
 ARG MIX_ENV=prod
 
 FROM hexpm/elixir:${ELIXIR_VERSION}-erlang-${OTP_VERSION}-debian-${DEBIAN_VERSION} AS builder
