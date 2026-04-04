@@ -1,7 +1,7 @@
 # ────────────────────────────────────────────────────────────────────────────────
 # 1️⃣  Builder image
 # ────────────────────────────────────────────────────────────────────────────────
-ARG ELIXIR_VERSION=1.16.2
+ARG ELIXIR_VERSION=1.18
 ARG OTP_VERSION=26.2.3
 ARG DEBIAN_VERSION=bookworm-20240130-slim
 ARG MIX_ENV=prod

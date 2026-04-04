@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    {Application.get_env(:live_debugger, :live_debugger_tags)}
+    <%= if Application.get_env(:goods, :env) == :dev do %>
+      {Application.get_env(:live_debugger, :live_debugger_tags)}
+    <% end %>
 
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
