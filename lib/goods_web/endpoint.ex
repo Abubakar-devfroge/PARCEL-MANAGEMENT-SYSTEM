@@ -7,6 +7,7 @@ defmodule GoodsWeb.Endpoint do
     store: :cookie,
     key: "_goods_key",
     signing_salt: "ZMbGaLfD",
+    secure: true,
     same_site: "Lax"
   ]
 
