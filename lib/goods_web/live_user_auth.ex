@@ -1,20 +1,24 @@
 defmodule GoodsWeb.LiveUserAuth do
   @moduledoc """
-  Helpers for authenticating users in LiveViews.
+  Helpers for authenticating users in LiveViews and managing session persistence.
   """
 
   import Phoenix.Component
   use GoodsWeb, :verified_routes
 
   require Ash.Query
+  alias AshAuthentication.Phoenix.LiveSession, as: AuthLive
 
-  # This is used for nested liveviews to fetch the current user.
-  # To use, place the following at the top of that liveview:
-  # on_mount {GoodsWeb.LiveUserAuth, :current_user}
+  #
+  # On mount helpers
+  #
+
+  # Assign current user from session
   def on_mount(:current_user, _params, session, socket) do
-    {:cont, AshAuthentication.Phoenix.LiveSession.assign_new_resources(socket, session)}
+    {:cont, AuthLive.assign_new_resources(socket, session)}
   end
 
+  # Optional user: assigns current_user if present, else nil
   def on_mount(:live_user_optional, _params, _session, socket) do
     if socket.assigns[:current_user] do
       {:cont, socket}
@@ -23,9 +27,11 @@ defmodule GoodsWeb.LiveUserAuth do
     end
   end
 
+  # Require logged-in user
   def on_mount(:live_user_required, _params, _session, socket) do
     if socket.assigns[:current_user] do
-      onboarding_complete = onboarding_complete?(socket.assigns.current_user)
+      current_user = socket.assigns.current_user
+      onboarding_complete = onboarding_complete?(current_user)
 
       cond do
         socket.view == GoodsWeb.OnboardingLive and onboarding_complete ->
@@ -45,6 +51,7 @@ defmodule GoodsWeb.LiveUserAuth do
     end
   end
 
+  # Admin-only access
   def on_mount(:live_admin_required, _params, _session, socket) do
     if socket.assigns[:current_user] do
       current_user = socket.assigns.current_user
@@ -68,6 +75,7 @@ defmodule GoodsWeb.LiveUserAuth do
     end
   end
 
+  # Ensure user is logged out
   def on_mount(:live_no_user, _params, _session, socket) do
     if socket.assigns[:current_user] do
       {:halt, Phoenix.LiveView.redirect(socket, to: ~p"/")}
@@ -75,6 +83,10 @@ defmodule GoodsWeb.LiveUserAuth do
       {:cont, assign(socket, :current_user, nil)}
     end
   end
+
+  #
+  # Private helpers
+  #
 
   defp onboarding_complete?(current_user) do
     case normalize_company_key(current_user.company_key) do
