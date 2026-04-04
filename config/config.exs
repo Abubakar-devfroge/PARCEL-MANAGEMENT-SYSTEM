@@ -60,7 +60,8 @@ config :goods,
 config :goods, GoodsWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Phoenix.Endpoint.Cowboy2Adapter,
-  # adapter: Bandit.PhoenixAdapter,
+  # This placeholder prevents the compile-time vs runtime mismatch error
+  force_ssl: [rewrite_on: [:x_forwarded_proto]],
   render_errors: [
     formats: [html: GoodsWeb.ErrorHTML, json: GoodsWeb.ErrorJSON],
     layout: false
@@ -69,12 +70,6 @@ config :goods, GoodsWeb.Endpoint,
   live_view: [signing_salt: "8uag03JX"]
 
 # Configure the mailer
-#
-# By default it uses the "Local" adapter which stores the emails
-# locally. You can see the emails in your browser, at "/dev/mailbox".
-#
-# For production it's recommended to configure a different adapter
-# at the `config/runtime.exs`.
 config :goods, Goods.Mailer, adapter: Swoosh.Adapters.Local
 
 # Configure esbuild (the version is required)
