@@ -1,7 +1,7 @@
 import Config
 
 # 1. THE LOADER MUST RUN FIRST (Local Dev only)
-if config_env() != :prod do
+if true do
   env_path = Path.expand("../.env", __DIR__)
 
   if File.exists?(env_path) do
@@ -88,7 +88,8 @@ if config_env() == :prod do
   # Cleaned up Repo Config (Merged)
   config :goods, Goods.Repo,
     url: database_url,
-   ssl: [verify: :verify_none],
+   ssl: true,
+   ssl_opts: [verify: :verify_none],
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "10"),
     socket_options: maybe_ipv6
 
