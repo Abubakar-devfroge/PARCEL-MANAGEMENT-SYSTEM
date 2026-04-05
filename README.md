@@ -36,21 +36,7 @@ graph TD
     User((Client/Agent)) -->|Phoenix LiveView| Web[Web Interface]
     Web -->|Actions| Ash[Ash Framework Resources]
     
-    subgraph "Logic & Data Layer"
-    Ash -->|Policies| Auth[RBAC Engine]
-    Ash -->|Calculations| Logic[Logistics Logic]
-    Ash -->|Queries| Repo[PostgreSQL / Ecto]
-    end
-
-    subgraph "External Integrations"
-    Logic -->|Async| SMS[SMS Gateway]
-    Logic -->|Storage| S3[DigitalOcean Spaces]
-    end
-
-    style Ash fill:#4B275F,color:#fff
-    style Repo fill:#4169E1,color:#fff
-    style Web fill:#FF3E00,color:#fff
-
+ 
 ---
 
 ## Deployment & Documentation
