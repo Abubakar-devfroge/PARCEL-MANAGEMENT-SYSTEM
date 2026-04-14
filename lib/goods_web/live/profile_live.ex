@@ -30,7 +30,7 @@ defmodule GoodsWeb.ProfileLive do
     ~H"""
     <Layouts.app flash={@flash}>
       <div class="mx-auto max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
-        <div class="border border-gray-200 bg-white shadow-md rounded-none">
+        <div class="border border-gray-200 bg-white shadow-sm rounded-sm">
           <div class="border-b border-gray-200 px-4 py-3 sm:px-6 ">
             <h1 class="text-xl font-semibold text-gray-900">Profile</h1>
           </div>
