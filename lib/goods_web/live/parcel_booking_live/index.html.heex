@@ -13,13 +13,13 @@
             New Parcel
           </.link>
 
-          <.link
+          <%!-- <.link
             id="parcel-reports-btn"
             navigate={~p"/parcel_reports"}
             class="inline-flex items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-700 inset-ring inset-ring-gray-300 transition hover:bg-gray-50"
           >
             Reports
-          </.link>
+          </.link> --%>
         </div>
       </div>
     </div>
@@ -40,7 +40,7 @@
         <p class="text-sm font-semibold">No parcels yet. Start by booking your first parcel.</p>
       </div>
     <% else %>
-      <div class="border border-gray-200 bg-white rounded-sm ">
+      <div class="border border-gray-200 bg-white rounded-sm shadow-sm ">
         <div class="border-b border-gray-200 bg-gray-50 px-4 py-3 sm:px-6">
           <div class="space-y-3">
             <form id="parcel-search-form" phx-change="search" class="w-full">
