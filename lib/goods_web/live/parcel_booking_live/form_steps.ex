@@ -1,12 +1,12 @@
 defmodule GoodsWeb.ParcelBookingLive.FormSteps do
   @max_step 3
   @step_fields %{
-    1 => ~w(sender_name sender_id sender_phone receiver_name receiver_id receiver_phone),
+    1 => ~w(sender_name  sender_phone receiver_name  receiver_phone),
     2 => ~w(origin_office_id destination_office_id route_id destination),
     3 => ~w(parcel_type quantity price)
   }
   @required_fields %{
-    1 => ~w(sender_name sender_id sender_phone receiver_name receiver_phone),
+    1 => ~w(sender_name  sender_phone receiver_name receiver_phone),
     2 => ~w(origin_office_id destination_office_id),
     3 => ~w(parcel_type quantity price)
   }

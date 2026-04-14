@@ -219,10 +219,8 @@ defmodule GoodsWeb.ParcelBookingLive.Index do
         query,
         contains(string_downcase(parcel_number), ^normalized_query) or
           contains(string_downcase(sender_name), ^normalized_query) or
-          contains(string_downcase(sender_id), ^normalized_query) or
           contains(string_downcase(sender_phone), ^normalized_query) or
           contains(string_downcase(receiver_name), ^normalized_query) or
-          contains(string_downcase(receiver_id), ^normalized_query) or
           contains(string_downcase(receiver_phone), ^normalized_query) or
           contains(string_downcase(parcel_type), ^normalized_query) or
           contains(string_downcase(destination), ^normalized_query)
@@ -242,7 +240,6 @@ defmodule GoodsWeb.ParcelBookingLive.Index do
 
   defp page_records(%{results: records}) when is_list(records), do: records
   defp page_records(records) when is_list(records), do: records
-  defp page_records(_), do: []
 
   defp page_count(%{count: count}) when is_integer(count), do: count
   defp page_count(_), do: nil

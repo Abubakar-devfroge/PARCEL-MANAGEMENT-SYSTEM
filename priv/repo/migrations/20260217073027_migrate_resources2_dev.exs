@@ -16,7 +16,6 @@ defmodule Goods.Repo.Migrations.MigrateResources2 do
       modify :receiver_phone, :text, null: false
       modify :receiver_name, :text, null: false
       modify :sender_phone, :text, null: false
-      modify :sender_id, :text, null: false
       modify :sender_name, :text, null: false
     end
   end
@@ -24,7 +23,6 @@ defmodule Goods.Repo.Migrations.MigrateResources2 do
   def down do
     alter table(:parcel_bookings) do
       modify :sender_name, :text, null: true
-      modify :sender_id, :text, null: true
       modify :sender_phone, :text, null: true
       modify :receiver_name, :text, null: true
       modify :receiver_phone, :text, null: true

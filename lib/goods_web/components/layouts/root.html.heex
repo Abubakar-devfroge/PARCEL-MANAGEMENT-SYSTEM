@@ -14,7 +14,7 @@
     <link rel="icon" type="image/x-icon" href={~p"/images/logo.png"} class="h-10 w-auto" />
 
     <link rel="stylesheet" href={~p"/assets/css/app.css"} media="print" onload="this.media='all'" />
-        <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
+    <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
     </script>
     <script>
       (() => {
@@ -36,7 +36,7 @@
       })();
     </script>
   </head>
-  <body class="font-sans antialiased">
+  <body>
     <GoodsWeb.Navigation.navbar current_user={assigns[:current_user]}>
       {@inner_content}
     </GoodsWeb.Navigation.navbar>

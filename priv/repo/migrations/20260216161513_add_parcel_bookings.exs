@@ -11,10 +11,8 @@ defmodule Goods.Repo.Migrations.AddParcelBookings do
     create table(:parcel_bookings, primary_key: false) do
       add :id, :uuid, null: false, default: fragment("gen_random_uuid()"), primary_key: true
       add :sender_name, :text
-      add :sender_id, :text
       add :sender_phone, :text
       add :receiver_name, :text
-      add :receiver_id, :text
       add :receiver_phone, :text
       add :destination, :text
       add :parcel_type, :text

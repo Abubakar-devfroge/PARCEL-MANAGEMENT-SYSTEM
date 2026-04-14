@@ -30,10 +30,8 @@ defmodule Logistics.ParcelBooking do
 
       accept [
         :sender_name,
-        :sender_id,
         :sender_phone,
         :receiver_name,
-        :receiver_id,
         :receiver_phone,
         :origin_office_id,
         :destination_office_id,
@@ -50,10 +48,8 @@ defmodule Logistics.ParcelBooking do
 
       accept [
         :sender_name,
-        :sender_id,
         :sender_phone,
         :receiver_name,
-        :receiver_id,
         :receiver_phone,
         :origin_office_id,
         :destination_office_id,
@@ -106,10 +102,6 @@ defmodule Logistics.ParcelBooking do
       allow_nil? false
     end
 
-    attribute :sender_id, :string do
-      allow_nil? false
-    end
-
     attribute :sender_phone, :string do
       allow_nil? false
     end
@@ -118,7 +110,6 @@ defmodule Logistics.ParcelBooking do
       allow_nil? false
     end
 
-    attribute :receiver_id, :string
 
     attribute :receiver_phone, :string do
       allow_nil? false
