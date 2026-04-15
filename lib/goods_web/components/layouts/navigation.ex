@@ -279,7 +279,7 @@ defmodule GoodsWeb.Navigation do
           <a
             href={~p"/"}
             class="inline-flex items-center gap-2 p-2 rounded-none
-          focus:outline focus:outline-3 focus:outline-dotted
+           focus:outline-3 focus:outline-dotted
           focus:outline-blue-500 focus:outline-offset-2"
           >
             <img
