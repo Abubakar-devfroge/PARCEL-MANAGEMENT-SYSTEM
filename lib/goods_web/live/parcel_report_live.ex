@@ -27,7 +27,7 @@ defmodule GoodsWeb.ParcelReportLive do
        |> assign(:report_data, report_data)
        |> assign(:chart_payload, build_chart_payload(report_data, filtered_bookings))
        |> assign(:alerts, build_alerts(report_data, filtered_bookings))
-       |> assign(:last_updated_at, DateTime.utc_now())
+       |> assign(:last_updated_at, DateTime.now!("Africa/Nairobi"))
        |> stream(:custom_rows, filtered_bookings)}
     else
       {:ok,
@@ -75,7 +75,7 @@ defmodule GoodsWeb.ParcelReportLive do
     |> assign(:report_data, report_data)
     |> assign(:chart_payload, build_chart_payload(report_data, filtered_bookings))
     |> assign(:alerts, build_alerts(report_data, filtered_bookings))
-    |> assign(:last_updated_at, DateTime.utc_now())
+    |> assign(:last_updated_at, DateTime.now!("Africa/Nairobi"))
     |> stream(:custom_rows, filtered_bookings, reset: true)
   end
 
@@ -405,18 +405,15 @@ defmodule GoodsWeb.ParcelReportLive do
 
   defp maybe_add_alert(alerts, false, _level, _message), do: alerts
 
-  defp alert_class(:warning), do: "border-amber-200 bg-amber-50 text-amber-600"
-  defp alert_class(:info), do: "border-blue-200 bg-blue-50 text-blue-800"
-
   defp normalize_tab(tab) when tab in @valid_tabs, do: tab
   defp normalize_tab(_), do: "summary"
 
-  defp tab_class(active_tab, tab) do
+  defp tab_link_class(active_tab, tab) do
     [
-      "border-b-2 px-1 py-3 text-sm font-medium transition",
+      "whitespace-nowrap px-1 py-4 text-sm font-bold uppercase tracking-widest transition-colors border-b-2",
       if(active_tab == tab,
-        do: "border-red-500 text-red-600",
-        else: "border-transparent text-gray-500 hover:text-gray-700"
+        do: "border-red-600 text-red-600",
+        else: "border-transparent text-zinc-400 hover:text-zinc-600 hover:border-zinc-200"
       )
     ]
   end

@@ -78,6 +78,7 @@ defmodule Goods.MixProject do
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 1.0"},
       {:jason, "~> 1.2"},
+      {:tzdata, "~> 1.1"},
       {:dns_cluster, "~> 0.2.0"},
       {:cowboy, "~> 2.10"},
       {:plug_cowboy, "~> 2.6"}
