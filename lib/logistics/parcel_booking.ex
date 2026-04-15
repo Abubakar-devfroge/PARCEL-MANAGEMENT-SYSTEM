@@ -110,7 +110,6 @@ defmodule Logistics.ParcelBooking do
       allow_nil? false
     end
 
-
     attribute :receiver_phone, :string do
       allow_nil? false
     end
