@@ -9,7 +9,7 @@ defmodule GoodsWeb.Navigation do
   def navbar(assigns) do
     ~H"""
     <%= if @current_user do %>
-      <div class="min-h-screen bg-blue-50/60">
+      <div id="sidebar-layout-container" class="min-h-screen bg-blue-50/60" phx-hook="SidebarHook">
         <div class="flex min-h-screen">
           <aside
             id="desktop-sidebar"
@@ -123,19 +123,9 @@ defmodule GoodsWeb.Navigation do
 
                 <button
                   type="button"
+                  id="sidebar-toggle-btn"
                   class="hidden lg:inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-700 ring-1 ring-gray-300 transition hover:bg-gray-50"
                   aria-label="Toggle sidebar"
-                  phx-click={
-                    JS.toggle_class("lg:w-50", to: "#desktop-sidebar")
-                    |> JS.toggle_class("lg:w-20", to: "#desktop-sidebar")
-                    |> JS.toggle_class("lg:pl-50", to: "#desktop-main")
-                    |> JS.toggle_class("lg:pl-20", to: "#desktop-main")
-                    |> JS.toggle_class("px-5", to: "#desktop-sidebar-inner")
-                    |> JS.toggle_class("px-2", to: "#desktop-sidebar-inner")
-                    |> JS.toggle_class("hidden", to: ".desktop-sidebar-label")
-                    |> JS.toggle_class("justify-start", to: ".desktop-nav-link")
-                    |> JS.toggle_class("justify-center", to: ".desktop-nav-link")
-                  }
                 >
                   <.icon name="hero-bars-3" class="h-6 w-6" />
                 </button>

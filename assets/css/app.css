@@ -81,5 +81,10 @@
 /* Make LiveView wrapper divs transparent for layout */
 [data-phx-session], [data-phx-teleported-src] { display: contents }
 
+/* Prevent horizontal layout jumps when page height changes between routes. */
+html {
+  scrollbar-gutter: stable;
+}
+
 /* This file is for your main application CSS */
 

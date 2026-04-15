@@ -24,8 +24,55 @@ import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import {hooks as colocatedHooks} from "phoenix-colocated/goods"
 import topbar from "../vendor/topbar"
+import Chart from "chart.js/auto"
 
+const ChartHook = {
+  mounted() {
+    this.chart = null
+    this.handleEvent("update-chart", (payload) => this.renderChart(payload))
+    
+    // Initial render if payload is already in dataset
+    const payload = this.el.dataset.payload
+    if (payload) {
+      this.renderChart(JSON.parse(payload))
+    }
+  },
+  destroyed() {
+    if (this.chart) this.chart.destroy()
+  },
+  renderChart(payload) {
+    const ctx = this.el.getContext("2d")
+    if (this.chart) this.chart.destroy()
 
+    const type = this.el.dataset.type || "line"
+    
+    this.chart = new Chart(ctx, {
+      type: type,
+      data: {
+        labels: payload.labels,
+        datasets: [{
+          data: payload.values,
+          backgroundColor: type === "bar" ? "#3b82f6" : "rgba(59, 130, 246, 0.1)",
+          borderColor: "#3b82f6",
+          borderWidth: 2,
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: { beginAtZero: true, grid: { borderDash: [2, 4] } },
+          x: { grid: { display: false } }
+        }
+      }
+    })
+  }
+}
 
 const InfiniteParcels = {
   mounted() {
@@ -79,11 +126,66 @@ const InfiniteParcels = {
   },
 }
 
+const SidebarHook = {
+  mounted() {
+    this.applySidebarState = (collapsed) => {
+      const sidebar = document.getElementById("desktop-sidebar")
+      const main = document.getElementById("desktop-main")
+      const inner = document.getElementById("desktop-sidebar-inner")
+      const labels = document.querySelectorAll(".desktop-sidebar-label")
+      const links = document.querySelectorAll(".desktop-nav-link")
+
+      if (!sidebar || !main || !inner) return
+
+      if (collapsed) {
+        sidebar.classList.replace("lg:w-50", "lg:w-20")
+        main.classList.replace("lg:pl-50", "lg:pl-20")
+        inner.classList.replace("px-5", "px-2")
+        labels.forEach(el => el.classList.add("hidden"))
+        links.forEach(el => el.classList.remove("justify-start"))
+        links.forEach(el => el.classList.add("justify-center"))
+      } else {
+        sidebar.classList.replace("lg:w-20", "lg:w-50")
+        main.classList.replace("lg:pl-20", "lg:pl-50")
+        inner.classList.replace("px-2", "px-5")
+        labels.forEach(el => el.classList.remove("hidden"))
+        links.forEach(el => el.classList.remove("justify-center"))
+        links.forEach(el => el.classList.add("justify-start"))
+      }
+    }
+
+    const toggleBtn = document.getElementById("sidebar-toggle-btn")
+    if (toggleBtn) {
+      toggleBtn.onclick = () => {
+        const sidebar = document.getElementById("desktop-sidebar")
+        const isCurrentlyCollapsed = sidebar && sidebar.classList.contains("lg:w-20")
+        const newState = !isCurrentlyCollapsed
+        this.applySidebarState(newState)
+        localStorage.setItem("sidebar-collapsed", newState)
+      }
+    }
+
+    // Restore state from localStorage on mount/remount
+    const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true"
+    if (isCollapsed) {
+      this.applySidebarState(true)
+    }
+  },
+
+  updated() {
+    // Re-apply state after a LiveView patch/update
+    const isCollapsed = localStorage.getItem("sidebar-collapsed") === "true"
+    if (isCollapsed) {
+      this.applySidebarState(true)
+    }
+  }
+}
+
 const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs:  false,
   params: {_csrf_token: csrfToken},
-  hooks: {...colocatedHooks, InfiniteParcels},
+  hooks: {...colocatedHooks, InfiniteParcels, ChartHook, SidebarHook},
 })
 
 // Show progress bar on live navigation and form submits

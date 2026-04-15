@@ -52,12 +52,8 @@ defmodule GoodsWeb.Router do
       live("/parcel_bookings/:id", ParcelBookingLive.Show, :show)
       live("/parcel_bookings/:id/show/edit", ParcelBookingLive.Show, :edit)
       live("/employees", EmployeeLive, :index)
-      live("/profile", ProfileLive, :index)
-    end
-
-    ash_authentication_live_session :admin_routes,
-      on_mount: [{GoodsWeb.LiveUserAuth, :live_admin_required}] do
       live("/parcel_reports", ParcelReportLive, :index)
+      live("/profile", ProfileLive, :index)
     end
 
     ash_authentication_live_session :onboarding_routes,
