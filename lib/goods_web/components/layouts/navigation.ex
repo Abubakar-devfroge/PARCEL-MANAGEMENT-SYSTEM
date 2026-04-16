@@ -9,245 +9,269 @@ defmodule GoodsWeb.Navigation do
   def navbar(assigns) do
     ~H"""
     <%= if @current_user do %>
-      <div class="min-h-screen bg-gray-100 flex flex-col">
-        
-    <!-- Top Navbar -->
-        <header class="w-full bg-white border-b border-gray-200">
-          <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex h-16 items-center justify-between">
-              
-    <!-- LEFT: BRAND -->
-              <.link navigate={~p"/dash"} class="flex items-center gap-4">
-                <img src={~p"/images/logo1.svg"} class="h-10 w-auto" />
+      <div id="sidebar-layout-container" class="min-h-screen bg-blue-50/60" phx-hook="SidebarHook">
+        <div class="flex min-h-screen">
+          <aside
+            id="desktop-sidebar"
+            class="hidden lg:flex lg:w-50 lg:fixed lg:inset-y-0 lg:z-40 font-sans antialiased"
+          >
+            <div
+              id="desktop-sidebar-inner"
+              class="flex grow flex-col overflow-y-auto  bg-red-700 px-5 py-6 transition-all duration-300"
+            >
+              <.link navigate={~p"/dash"} class="mb-8 flex items-center gap-3 px-1">
+                <img
+                  src={~p"/images/logo1.svg"}
+                  class="h-15 w-auto rounded-full"
+                  alt="ParcelTracker logo"
+                  width="80"
+                  height="80"
+                  fetchpriority="high"
+                  oncontextmenu="return false;"
+                />
+                <div></div>
               </.link>
-              
-    <!-- RIGHT: USER + ACTIONS -->
-              <div class="flex items-center gap-3">
-                
-    <!-- SETTINGS -->
-                <div class="relative hidden sm:block">
-                  <button
-                    phx-click={JS.toggle(to: "#settings-menu")}
-                    class="p-2 rounded-full border border-gray-300 hover:bg-gray-100"
-                  >
-                    <.icon name="hero-cog-6-tooth" class="h-5 w-5 text-gray-600" />
-                  </button>
 
-                  <div
-                    id="settings-menu"
-                    class="hidden absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg"
-                  >
-                    <div class="p-3 space-y-2">
-                      <button class="w-full text-left text-sm text-gray-700 hover:bg-gray-100 px-3 py-2 rounded">
-                        Dark Mode
-                      </button>
-
-                      <button class="w-full text-left text-sm text-gray-700 hover:bg-gray-100 px-3 py-2 rounded">
-                        Preferences
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                
-    <!-- USER DROPDOWN -->
-                <div class="relative">
-                  <button
-                    phx-click={JS.toggle(to: "#user-menu")}
-                    class="flex items-center gap-2 px-3 py-1.5 rounded-md border border-gray-300 hover:bg-gray-100"
-                  >
-                    <span class="text-sm text-gray-700">
-                      {@current_user.email}
-                    </span>
-
-                    <svg class="h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" />
-                    </svg>
-                  </button>
-                  
-    <!-- DROPDOWN -->
-                  <div
-                    id="user-menu"
-                    class="hidden absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg"
-                  >
-                    <div class="py-1">
-                      <.link
-                        navigate={~p"/profile"}
-                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      >
-                        Profile
-                      </.link>
-
-                      <.link
-                        navigate={~p"/profile"}
-                        class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      >
-                        Settings
-                      </.link>
-
-                      <div class="border-t border-gray-100"></div>
-
-                      <.link
-                        href={~p"/sign-out"}
-                        class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                      >
-                        Log out
-                      </.link>
-                    </div>
-                  </div>
-                </div>
-                
-    <!-- MOBILE MENU BUTTON -->
-                <button
-                  class="md:hidden p-2 rounded-md border border-gray-300"
-                  phx-click={JS.toggle(to: "#mobile-menu")}
+              <nav class="space-y-1" aria-label="Sidebar">
+                <.link
+                  navigate={~p"/dash"}
+                  class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
                 >
-                  <.icon name="hero-bars-3" class="h-5 w-5" />
-                </button>
-              </div>
-            </div>
-          </nav>
-          
-    <!-- MOBILE MENU -->
-          <div id="mobile-menu" class="hidden md:hidden border-t border-gray-200 bg-white">
-            <div class="px-4 py-3 space-y-2">
-              <.link navigate={~p"/dash"} class="block text-sm text-gray-700 hover:text-black">
-                Dashboard
-              </.link>
+                  <.icon
+                    name="hero-home"
+                    class="h-6 w-6 text-white transition-colors group-hover:text-white"
+                  />
+                  <span class="desktop-sidebar-label">Dashboard</span>
+                </.link>
 
-              <.link
-                navigate={~p"/parcel_bookings"}
-                class="block text-sm text-gray-700 hover:text-black"
-              >
-                Parcels
-              </.link>
+                <.link
+                  navigate={~p"/parcel_bookings"}
+                  class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
+                >
+                  <.icon
+                    name="hero-cube-transparent"
+                    class="h-6 w-6 text-white/90 transition-colors group-hover:text-white"
+                  /> <span class="desktop-sidebar-label">Parcels</span>
+                </.link>
 
-              <.link navigate={~p"/employees"} class="block text-sm text-gray-700 hover:text-black">
-                Employees
-              </.link>
+                <.link
+                  navigate={~p"/employees"}
+                  class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
+                >
+                  <.icon
+                    name="hero-users"
+                    class="h-6 w-6 text-white/90 transition-colors group-hover:text-white"
+                  /> <span class="desktop-sidebar-label">Employees</span>
+                </.link>
 
-              <.link
-                navigate={~p"/parcel_reports"}
-                class="block text-sm text-gray-700 hover:text-black"
-              >
-                Reports
-              </.link>
+                <.link
+                  navigate={~p"/parcel_reports"}
+                  class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
+                >
+                  <.icon
+                    name="hero-chart-bar"
+                    class="h-6 w-6 text-white/90 transition-colors group-hover:text-white"
+                  /> <span class="desktop-sidebar-label">Reports</span>
+                </.link>
+              </nav>
 
-              <div class="border-t pt-2 mt-2">
-                <.link href={~p"/sign-out"} class="block text-sm text-red-600">
-                  Log out
+              <div class="mt-auto border-t border-white/20 pt-4">
+                <.link
+                  navigate={~p"/parcel_reports"}
+                  class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
+                >
+                  <.icon
+                    name="hero-clock"
+                    class="h-6 w-6 text-white/90 transition-colors group-hover:text-white"
+                  /> <span class="desktop-sidebar-label">Activity logs</span>
+                </.link>
+
+                <.link
+                  href={~p"/sign-out"}
+                  class="desktop-nav-link group flex items-center justify-start gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-white transition duration-200 hover:bg-white/10 hover:text-white"
+                >
+                  <.icon
+                    name="hero-arrow-right-on-rectangle"
+                    class="h-6 w-6 text-white/90 transition-colors group-hover:text-white"
+                  /> <span class="desktop-sidebar-label">Log out</span>
                 </.link>
               </div>
             </div>
-          </div>
-        </header>
-        
-    <!-- PAGE BODY -->
-        <main class="flex-1 ">
-          <div class="mx-auto max-w-7xl px-4 sm:px-4 lg:px-4 py-4">
-            
-    <!-- GRID -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
-              
-    <!-- LEFT CARD (THINNER + TALLER FEEL) -->
-              <aside class="lg:col-span-3">
-                <div class="p-4 mt-2 sm:p-6 bg-white ring-1 ring-gray-100 min-h-full rounded-2xl ring-dark">
-                  <!-- Header -->
-                  <div class="mt-4">
-                    <form phx-change="search" phx-submit="search">
-                      <label for="search" class="sr-only">Search Country</label>
-                      <div class="grid grid-cols-1">
-                        <svg
-                          class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-500 z-10"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 20 20"
-                        >
-                          <path
-                            fill="currentColor"
-                            d="M9.25 2.5A6.752 6.752 0 0 1 16 9.25 6.752 6.752 0 0 1 9.25 16 6.752 6.752 0 0 1 2.5 9.25 6.752 6.752 0 0 1 9.25 2.5Zm0 12c2.9 0 5.25-2.35 5.25-5.25C14.5 6.349 12.15 4 9.25 4A5.248 5.248 0 0 0 4 9.25c0 2.9 2.349 5.25 5.25 5.25Zm6.364.053 2.121 2.121-1.06 1.061-2.122-2.121 1.06-1.06Z"
-                          >
-                          </path>
-                        </svg>
-                        <input
-                          type="search"
-                          id="search"
-                          name="search"
-                          placeholder="Search "
-                          autocomplete="off"
-                          class="col-start-1 row-start-1 block w-full rounded-md bg-transparent border border-gray-100 focus:border focus:border-blue-700 py-1.5 pl-10 pr-3 user_dialog_input"
+          </aside>
+
+          <div id="desktop-main" class="flex flex-1 flex-col lg:pl-50 transition-all duration-300">
+            <header class="sticky top-0 z-30 border-b border-gray-100 bg-white/95 shadow-sm backdrop-blur">
+              <div class="flex h-14 items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+                <button
+                  class="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-700 ring-1 ring-gray-300 transition hover:bg-gray-50 lg:hidden"
+                  aria-label="Open menu"
+                  phx-click={
+                    JS.show(
+                      to: "#mobile-sidebar-shell",
+                      transition:
+                        {"transition-opacity ease-out duration-200", "opacity-0", "opacity-100"}
+                    )
+                    |> JS.show(
+                      to: "#mobile-sidebar-panel",
+                      transition:
+                        {"transition ease-out duration-200", "-translate-x-full", "translate-x-0"}
+                    )
+                  }
+                >
+                  <.icon name="hero-bars-3" class="h-6 w-6" />
+                </button>
+
+                <button
+                  type="button"
+                  id="sidebar-toggle-btn"
+                  class="hidden lg:inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-700 ring-1 ring-gray-300 transition hover:bg-gray-50"
+                  aria-label="Toggle sidebar"
+                >
+                  <.icon name="hero-bars-3" class="h-6 w-6" />
+                </button>
+
+                <div class="ml-auto">
+                  <el-dropdown class="inline-block">
+                    <button class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring-1 inset-ring-gray-300 hover:bg-gray-50">
+                      {@current_user.email}
+                      <svg
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        data-slot="icon"
+                        aria-hidden="true"
+                        class="-mr-1 size-5 text-gray-400"
+                      >
+                        <path
+                          d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                          clip-rule="evenodd"
+                          fill-rule="evenodd"
                         />
+                      </svg>
+                    </button>
+
+                    <el-menu
+                      anchor="bottom end"
+                      popover
+                      class="w-56 origin-top-right rounded-md bg-white shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
+                    >
+                      <div class="py-1">
+                        <a
+                          href={~p"/profile?tab=personal"}
+                          class="block px-4 py-2 text-sm text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden"
+                        >
+                          Account Management
+                        </a>
+
+                        <a
+                          href={~p"/profile?tab=license"}
+                          class="block px-4 py-2 text-sm text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden"
+                        >
+                          License
+                        </a>
+
+                        <.link
+                          href={~p"/sign-out"}
+                          class="block px-4 py-2 text-sm text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden"
+                        >
+                          Log out
+                        </.link>
                       </div>
-                    </form>
-                  </div>
-                  
-    <!-- Nav -->
-                  <div class="p-3 space-y-1 flex-1">
-                    <.link
-                      navigate={~p"/dash"}
-                      class="block px-4 py-2.5 rounded-lg hover:bg-gray-100 text-sm font-medium text-gray-700"
-                    >
-                      <.icon
-                        name="hero-home"
-                        class="h-6 w-6 text-black transition-colors group-hover:text-black"
-                      /> Dashboard
-                    </.link>
-
-                    <.link
-                      navigate={~p"/parcel_bookings"}
-                      class="block px-4 py-2.5 rounded-lg hover:bg-gray-100 text-sm font-medium text-gray-700"
-                    >
-                      <.icon
-                        name="hero-cube-transparent"
-                        class="h-6 w-6 text-black transition-colors group-hover:text-black"
-                      /> Parcels
-                    </.link>
-
-                    <.link
-                      navigate={~p"/employees"}
-                      class="block px-4 py-2.5 rounded-lg hover:bg-gray-100 text-sm font-medium text-gray-700"
-                    >
-                      <.icon
-                        name="hero-users"
-                        class="h-6 w-6 text-black transition-colors group-hover:text-black"
-                      /> Employees Management
-                    </.link>
-
-                    <.link
-                      navigate={~p"/parcel_reports"}
-                      class="block px-4 py-2.5 rounded-lg hover:bg-gray-100 text-sm font-medium text-gray-700"
-                    >
-                      <.icon
-                        name="hero-chart-bar"
-                        class="h-6 w-6 text-black transition-colors group-hover:text-black"
-                      /> Reports & Analytics
-                    </.link>
-                  </div>
-                  
-    <!-- Footer -->
-                  <div class="border-t border-gray-100 px-5 py-3 text-xs text-gray-500">
-                    Goods System • v1.0
-                  </div>
+                    </el-menu>
+                  </el-dropdown>
                 </div>
-              </aside>
-              
-    <!-- RIGHT CARD (WIDER + MORE DOMINANT) -->
-              <section class="lg:col-span-9">
-                <div class=" rounded-sm border border-gray-100 min-h-full">
-                  
-    <!-- CONTENT -->
-                  <div class="p-2 ">
-                    <img
-                      class="w-full h-10 ring-dark rounded-t-2xl"
-                      src={~p"/images/blue_pattern.png"}
-                      alt="pattern"
-                    />
-                    {render_slot(@inner_block)}
-                  </div>
-                </div>
-              </section>
-            </div>
+              </div>
+            </header>
+
+            <main class="flex-1 px-2 py-4 sm:px-4 sm:py-6 lg:px-2 lg:py-4 bg-white">
+              {render_slot(@inner_block)}
+            </main>
           </div>
-        </main>
+        </div>
+
+        <div id="mobile-sidebar-shell" class="fixed inset-0 z-50 hidden lg:hidden" aria-hidden="true">
+          <button
+            type="button"
+            class="absolute inset-0 bg-transparent"
+            aria-label="Close menu"
+            phx-click={
+              JS.hide(
+                to: "#mobile-sidebar-panel",
+                transition: {"transition ease-in duration-150", "translate-x-0", "-translate-x-full"}
+              )
+              |> JS.hide(
+                to: "#mobile-sidebar-shell",
+                transition: {"transition-opacity ease-in duration-150", "opacity-100", "opacity-0"}
+              )
+            }
+          >
+          </button>
+
+          <div
+            id="mobile-sidebar-panel"
+            class="relative flex h-full w-72 max-w-[85vw] -translate-x-full flex-col  bg-red-700 px-5 py-6"
+          >
+            <div class="mb-8 flex items-center justify-between">
+              <.link navigate={~p"/dash"} class="flex items-center gap-3">
+                <img
+                  src={~p"/images/logo1.svg"}
+                  class="h-10 w-auto rounded-full"
+                  alt="ParcelTracker logo"
+                  width="80"
+                  height="80"
+                  fetchpriority="high"
+                  oncontextmenu="return false;"
+                />
+              </.link>
+
+              <button
+                type="button"
+                class="rounded-md bg-white/10 p-2 text-white ring-1 ring-white/20 transition hover:bg-white/20"
+                aria-label="Close menu"
+                phx-click={
+                  JS.hide(
+                    to: "#mobile-sidebar-panel",
+                    transition:
+                      {"transition ease-in duration-150", "translate-x-0", "-translate-x-full"}
+                  )
+                  |> JS.hide(
+                    to: "#mobile-sidebar-shell",
+                    transition:
+                      {"transition-opacity ease-in duration-150", "opacity-100", "opacity-0"}
+                  )
+                }
+              >
+                <.icon name="hero-x-mark" class="h-6 w-6" />
+              </button>
+            </div>
+
+            <nav class="space-y-1" aria-label="Mobile sidebar">
+              <.link
+                navigate={~p"/dash"}
+                class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white hover:bg-white/10"
+              >
+                <.icon name="hero-home" class="h-6 w-6 text-white/90" /> Dashboard
+              </.link>
+              <.link
+                navigate={~p"/parcel_bookings"}
+                class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white hover:bg-white/10"
+              >
+                <.icon name="hero-cube-transparent" class="h-6 w-6 text-white/90" /> Parcels
+              </.link>
+              <.link
+                navigate={~p"/employees"}
+                class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white hover:bg-white/10"
+              >
+                <.icon name="hero-users" class="h-6 w-6 text-white/90" /> Employees
+              </.link>
+              <.link
+                navigate={~p"/profile"}
+                class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-white hover:bg-white/10"
+              >
+                <.icon name="hero-cog-6-tooth" class="h-6 w-6 text-white/90" /> Reports
+              </.link>
+            </nav>
+          </div>
+        </div>
       </div>
     <% else %>
       <header class="navbar px-4 sm:px-6 lg:px-8 bg-white  flex items-center h-16">
