@@ -6,7 +6,8 @@ defmodule GoodsWeb.ParcelBookingLive.Index do
   @page_size 40
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(params, _session, socket) do
+    search_query = extract_search_query(params)
     pagination_mode = pagination_mode()
 
     {:ok,
@@ -14,7 +15,7 @@ defmodule GoodsWeb.ParcelBookingLive.Index do
      |> assign(:page_title, "Listing Parcel bookings")
      |> assign_new(:current_user, fn -> nil end)
      |> assign(:delete_parcel_id, nil)
-     |> assign(:search_query, "")
+     |> assign(:search_query, search_query)
      |> assign(:parcel_bookings_count, 0)
      |> assign(:filtered_parcel_bookings_count, 0)
      |> assign(:loading_more?, false)
@@ -24,6 +25,14 @@ defmodule GoodsWeb.ParcelBookingLive.Index do
      |> assign(:pagination_mode, pagination_mode)
      |> stream(:parcel_bookings, [])
      |> reset_and_load(refresh_total_count?: true)}
+  end
+
+  defp extract_search_query(params) do
+    params
+    |> Map.get("search", %{})
+    |> Map.get("q", "")
+    |> to_string()
+    |> String.trim()
   end
 
   @impl true

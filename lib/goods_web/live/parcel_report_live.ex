@@ -40,8 +40,15 @@ defmodule GoodsWeb.ParcelReportLive do
   @impl true
   def handle_params(params, _uri, socket) do
     active_tab = params |> Map.get("tab") |> normalize_tab()
+    incoming_filters = Map.get(params, "filters")
 
-    {:noreply, assign(socket, :active_tab, active_tab)}
+    socket = assign(socket, :active_tab, active_tab)
+
+    if is_map(incoming_filters) do
+      {:noreply, refresh_report_assigns(socket, normalize_filters(incoming_filters))}
+    else
+      {:noreply, socket}
+    end
   end
 
   @impl true
