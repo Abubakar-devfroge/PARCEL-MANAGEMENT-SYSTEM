@@ -4,21 +4,38 @@ const defaultTheme = require("tailwindcss/defaultTheme")
 module.exports = {
   content: [
     "./js/**/*.js",
-    "../lib/your_app_web.ex",        // Change 'your_app' to your actual app name
-    "../lib/your_app_web/**/*.*ex"
+    "../lib/goods_web.ex",        
+    "../lib/goods_web/**/*.*ex"
   ],
   theme: {
     extend: {
       fontFamily: {
-        // This makes 'Inter' the default font for your whole app
-        sans: ["Inter", ...defaultTheme.fontFamily.sans],
-        // This is perfect for Tracking IDs and Plate Numbers
+        // Full production font stack (Inter + system fallbacks)
+        sans: [
+          "Inter",
+          "system-ui",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "Segoe UI",
+          "Roboto",
+          "Helvetica Neue",
+          "Arial",
+          "Noto Sans",
+          "sans-serif",
+          "Apple Color Emoji",
+          "Segoe UI Emoji",
+          "Segoe UI Symbol",
+          "Noto Color Emoji"
+        ],
+
+        // KEEPING your mono exactly as required
         mono: ["JetBrains Mono", ...defaultTheme.fontFamily.mono],
       },
+
       colors: {
         brand: {
-          dark: '#0F172A',
-          primary: '#2563EB',
+          dark: "#0F172A",
+          primary: "#2563EB",
         }
       }
     },

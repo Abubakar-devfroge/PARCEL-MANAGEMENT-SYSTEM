@@ -148,9 +148,9 @@ defmodule GoodsWeb.CoreComponents do
   def button(%{rest: rest} = assigns) do
     variants = %{
       "primary" =>
-        "font-medium text-base bg-black text-white rounded-md  px-4 py-4 hover:bg-amber-600 hover:text-white  transition-colors duration-300",
+        "font-medium text-base bg-black text-white rounded-sm  px-4 py-4 hover:bg-amber-600 hover:text-white  transition-colors duration-300",
       nil =>
-        "font-medium text-base bg-gray-100 text-gray-900 rounded-md  px-4 py-4 hover:bg-gray-400 hover:text-gray-900 transition-colors duration-300"
+        "font-medium text-base bg-gray-100 text-gray-900 rounded-sm  px-4 py-4 hover:bg-gray-400 hover:text-gray-900 transition-colors duration-300"
     }
 
     assigns =

@@ -413,7 +413,7 @@ defmodule GoodsWeb.ParcelReportLive do
       "whitespace-nowrap px-1 py-4 text-sm font-bold uppercase tracking-widest transition-colors border-b-2",
       if(active_tab == tab,
         do: "border-red-600 text-red-600",
-        else: "border-transparent text-zinc-400 hover:text-zinc-600 hover:border-zinc-200"
+        else: "border-transparent text-gray-400 hover:text-gray-600 hover:border-gray-200"
       )
     ]
   end
